@@ -10,7 +10,8 @@
   }
 
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  let reduceMotion = reduceMotionQuery.matches;
+  const a11ySettingsKey = "mesudarotA11ySettings";
+  let reduceMotion = reduceMotionQuery.matches || getStoredReduceMotionSetting();
   let targetScroll = 0;
   let scrollProgress = 0;
 
@@ -31,6 +32,15 @@
   let paintFill;
   let polishDrop;
   let brushTip;
+
+  function getStoredReduceMotionSetting() {
+    try {
+      const settings = JSON.parse(window.localStorage.getItem(a11ySettingsKey) || "{}");
+      return Boolean(settings["reduce-motion"]);
+    } catch (error) {
+      return false;
+    }
+  }
 
   try {
     renderer = new THREE.WebGLRenderer({
@@ -454,9 +464,16 @@
 
   function render() {
     const elapsed = clock.getElapsedTime();
-    scrollProgress += (targetScroll - scrollProgress) * (reduceMotion ? 0.18 : 0.075);
-    easedPointer.x += (pointer.x - easedPointer.x) * 0.08;
-    easedPointer.y += (pointer.y - easedPointer.y) * 0.08;
+
+    if (reduceMotion) {
+      scrollProgress = targetScroll;
+      easedPointer.x = 0;
+      easedPointer.y = 0;
+    } else {
+      scrollProgress += (targetScroll - scrollProgress) * 0.075;
+      easedPointer.x += (pointer.x - easedPointer.x) * 0.08;
+      easedPointer.y += (pointer.y - easedPointer.y) * 0.08;
+    }
 
     const open = THREE.MathUtils.smoothstep(scrollProgress, 0, 0.58);
     const paint = THREE.MathUtils.smoothstep(scrollProgress, 0.22, 1);
@@ -482,11 +499,11 @@
     bottleGroup.rotation.z = Math.sin(drift * 0.45) * (reduceMotion ? 0 : 0.018);
     nailGroup.rotation.z = -0.02 + easedPointer.x * 0.035;
 
-    sparkleGroup.rotation.y = -elapsed * (reduceMotion ? 0.01 : 0.06) + easedPointer.x * 0.12;
+    sparkleGroup.rotation.y = reduceMotion ? 0 : -elapsed * 0.06 + easedPointer.x * 0.12;
     sparkles.forEach((sparkle) => {
-      const pulse = 0.86 + Math.sin(elapsed * 1.7 + sparkle.userData.phase) * (reduceMotion ? 0.04 : 0.16);
+      const pulse = reduceMotion ? 0.86 : 0.86 + Math.sin(elapsed * 1.7 + sparkle.userData.phase) * 0.16;
       sparkle.scale.setScalar(pulse * 0.86);
-      sparkle.position.y = sparkle.userData.base.y + Math.sin(elapsed + sparkle.userData.phase) * (reduceMotion ? 0.01 : 0.04);
+      sparkle.position.y = sparkle.userData.base.y + (reduceMotion ? 0 : Math.sin(elapsed + sparkle.userData.phase) * 0.04);
     });
 
     pointerLight.position.set(easedPointer.x * 2.4, easedPointer.y * 1.4, 3.5);
@@ -508,9 +525,13 @@
 
   if (typeof reduceMotionQuery.addEventListener === "function") {
     reduceMotionQuery.addEventListener("change", (event) => {
-      reduceMotion = event.matches;
+      reduceMotion = event.matches || getStoredReduceMotionSetting();
     });
   }
+
+  window.addEventListener("mesudarot:a11y-change", (event) => {
+    reduceMotion = reduceMotionQuery.matches || Boolean(event.detail?.settings?.["reduce-motion"]);
+  });
 
   window.mesudarotHeroScene = {
     getState: () => ({

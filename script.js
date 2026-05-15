@@ -17,10 +17,27 @@
   const cookieChoiceKey = "mesudarotCookieChoice";
   const a11ySettingsKey = "mesudarotA11ySettings";
   const a11yClasses = {
+    "small-text": "a11y-small-text",
     "large-text": "a11y-large-text",
     "high-contrast": "a11y-high-contrast",
-    "underline-links": "a11y-underline-links"
+    "underline-links": "a11y-underline-links",
+    "reduce-motion": "a11y-reduce-motion"
   };
+  const defaultA11ySettings = {
+    "small-text": false,
+    "large-text": false,
+    "high-contrast": false,
+    "underline-links": false,
+    "reduce-motion": false
+  };
+  let currentA11ySettings = {
+    ...defaultA11ySettings,
+    ...getSavedA11ySettings()
+  };
+
+  function isReducedMotionEnabled() {
+    return reduceMotionQuery.matches || Boolean(currentA11ySettings["reduce-motion"]);
+  }
 
   function setupScrollReveal() {
     const revealTargets = [];
@@ -60,7 +77,7 @@
 
     if (!revealTargets.length) return;
 
-    if (reduceMotionQuery.matches || !("IntersectionObserver" in window)) {
+    if (isReducedMotionEnabled() || !("IntersectionObserver" in window)) {
       revealTargets.forEach((target) => target.classList.add("is-visible"));
       return;
     }
@@ -102,6 +119,7 @@
     });
   }
 
+  applyA11ySettings(false);
   setupScrollReveal();
 
   function setupReviewsCarousel() {
@@ -143,7 +161,7 @@
       activeIndex = Math.min(Math.max(index, 0), maxIndex);
       track.scrollTo({
         left: cards[activeIndex].offsetLeft - track.offsetLeft,
-        behavior: reduceMotionQuery.matches ? "auto" : "smooth"
+        behavior: isReducedMotionEnabled() ? "auto" : "smooth"
       });
       updateControls();
     }
@@ -272,7 +290,7 @@
     if (element.dataset.counted === "true") return;
 
     const target = Number(element.dataset.count || 0);
-    const reduceMotion = reduceMotionQuery.matches;
+    const reduceMotion = isReducedMotionEnabled();
     element.dataset.counted = "true";
 
     if (!target || reduceMotion) {
@@ -447,22 +465,37 @@
     }
   }
 
-  let currentA11ySettings = {
-    "large-text": false,
-    "high-contrast": false,
-    "underline-links": false,
-    ...getSavedA11ySettings()
-  };
+  function normalizeA11ySettings() {
+    if (currentA11ySettings["small-text"] && currentA11ySettings["large-text"]) {
+      currentA11ySettings["small-text"] = false;
+    }
+  }
 
-  function applyA11ySettings() {
+  function applyA11ySettings(shouldPersist = true) {
+    normalizeA11ySettings();
+
     Object.entries(a11yClasses).forEach(([setting, className]) => {
       document.body.classList.toggle(className, Boolean(currentA11ySettings[setting]));
+      document.documentElement.classList.toggle(className, Boolean(currentA11ySettings[setting]));
       document.querySelectorAll(`[data-a11y-toggle="${setting}"]`).forEach((button) => {
         button.setAttribute("aria-pressed", String(Boolean(currentA11ySettings[setting])));
       });
     });
 
-    writeStorage(a11ySettingsKey, JSON.stringify(currentA11ySettings));
+    if (currentA11ySettings["reduce-motion"]) {
+      document.documentElement.classList.remove("motion-ready");
+      document.querySelectorAll(".scroll-reveal, .scroll-reveal-item").forEach((target) => {
+        target.classList.add("is-visible");
+      });
+    }
+
+    if (shouldPersist) {
+      writeStorage(a11ySettingsKey, JSON.stringify(currentA11ySettings));
+    }
+
+    window.dispatchEvent(new CustomEvent("mesudarot:a11y-change", {
+      detail: { settings: { ...currentA11ySettings } }
+    }));
   }
 
   function closeA11yPanel() {
@@ -490,16 +523,21 @@
     button.addEventListener("click", () => {
       const setting = button.dataset.a11yToggle;
       currentA11ySettings[setting] = !currentA11ySettings[setting];
+
+      if (setting === "small-text" && currentA11ySettings[setting]) {
+        currentA11ySettings["large-text"] = false;
+      }
+
+      if (setting === "large-text" && currentA11ySettings[setting]) {
+        currentA11ySettings["small-text"] = false;
+      }
+
       applyA11ySettings();
     });
   });
 
   document.querySelector("#a11y-reset")?.addEventListener("click", () => {
-    currentA11ySettings = {
-      "large-text": false,
-      "high-contrast": false,
-      "underline-links": false
-    };
+    currentA11ySettings = { ...defaultA11ySettings };
     removeStorage(a11ySettingsKey);
     applyA11ySettings();
   });
