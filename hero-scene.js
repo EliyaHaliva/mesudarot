@@ -1,6 +1,7 @@
 (function () {
   const THREE = window.THREE;
   const container = document.querySelector("#hero-scene");
+  const i18n = window.MesudarotI18n;
 
   if (!container) return;
 
@@ -32,6 +33,7 @@
   let paintFill;
   let polishDrop;
   let brushTip;
+  let bottleLabelMaterial;
 
   function getStoredReduceMotionSetting() {
     try {
@@ -63,9 +65,37 @@
   }
 
   renderer.domElement.setAttribute("role", "img");
-  renderer.domElement.setAttribute("aria-label", "אנימציית תלת ממד של בקבוק לק שנפתח ומברשת שצובעת ציפורן בגלילה");
   renderer.domElement.tabIndex = -1;
   container.appendChild(renderer.domElement);
+
+  function updateCanvasLabel() {
+    renderer.domElement.setAttribute(
+      "aria-label",
+      i18n?.t("runtime.heroSceneCanvasLabel", container.getAttribute("aria-label") || "")
+    );
+  }
+
+  function updateBottleLabelTexture() {
+    if (!bottleLabelMaterial || !bottleLabelMaterial.map) return;
+
+    const nextTexture = createLabelTexture();
+
+    if (!nextTexture) return;
+
+    bottleLabelMaterial.map.dispose?.();
+    bottleLabelMaterial.map = nextTexture;
+    bottleLabelMaterial.needsUpdate = true;
+  }
+
+  updateCanvasLabel();
+  i18n?.ready?.then(() => {
+    updateCanvasLabel();
+    updateBottleLabelTexture();
+  });
+  window.addEventListener("mesudarot:language-change", () => {
+    updateCanvasLabel();
+    updateBottleLabelTexture();
+  });
 
   camera.position.set(0, 0.05, 8.7);
   scene.add(root);
@@ -218,14 +248,14 @@
     context.fill();
     context.stroke();
 
-    context.direction = "rtl";
+    context.direction = i18n?.getDirection?.() === "rtl" ? "rtl" : "ltr";
     context.textAlign = "center";
     context.fillStyle = "#c01866";
     context.font = "700 58px Arial";
-    context.fillText("מסודרות", 256, 116);
+    context.fillText(i18n?.t("runtime.bottleLabel.brand") || "", 256, 116);
     context.fillStyle = "#97174e";
     context.font = "600 30px Arial";
-    context.fillText("לק ג'ל", 256, 160);
+    context.fillText(i18n?.t("runtime.bottleLabel.product") || "", 256, 160);
     context.fillStyle = "#f5c86b";
     context.fillRect(172, 184, 168, 8);
 
@@ -268,10 +298,10 @@
     bottleGroup.add(neck);
 
     const labelTexture = createLabelTexture();
-    const labelMaterial = labelTexture
+    bottleLabelMaterial = labelTexture
       ? new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true })
       : pearl;
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.42), labelMaterial);
+    const label = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.42), bottleLabelMaterial);
     label.position.set(-0.9, 0.02, 0.324);
     bottleGroup.add(label);
 

@@ -16,6 +16,7 @@
   const whatsappUrl = "https://api.whatsapp.com/send?phone=972526086083";
   const cookieChoiceKey = "mesudarotCookieChoice";
   const a11ySettingsKey = "mesudarotA11ySettings";
+  const i18n = window.MesudarotI18n;
   const a11yClasses = {
     "small-text": "a11y-small-text",
     "large-text": "a11y-large-text",
@@ -258,10 +259,15 @@
     tab.addEventListener("keydown", (event) => {
       const currentIndex = tabs.indexOf(tab);
       let nextIndex = currentIndex;
+      const isRtl = document.documentElement.dir !== "ltr";
 
-      if (event.key === "ArrowLeft" || event.key === "ArrowDown") {
+      if (event.key === "ArrowLeft") {
+        nextIndex = isRtl ? (currentIndex + 1) % tabs.length : (currentIndex - 1 + tabs.length) % tabs.length;
+      } else if (event.key === "ArrowRight") {
+        nextIndex = isRtl ? (currentIndex - 1 + tabs.length) % tabs.length : (currentIndex + 1) % tabs.length;
+      } else if (event.key === "ArrowDown") {
         nextIndex = (currentIndex + 1) % tabs.length;
-      } else if (event.key === "ArrowRight" || event.key === "ArrowUp") {
+      } else if (event.key === "ArrowUp") {
         nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
       } else if (event.key === "Home") {
         nextIndex = 0;
@@ -283,7 +289,7 @@
   });
 
   function formatNumber(value) {
-    return new Intl.NumberFormat("he-IL").format(Math.round(value));
+    return new Intl.NumberFormat(i18n?.getIntlLocale?.() || "he-IL").format(Math.round(value));
   }
 
   function runCountUp(element) {
@@ -331,6 +337,14 @@
     }
   }
 
+  window.addEventListener("mesudarot:language-change", () => {
+    countUpElements.forEach((element) => {
+      if (element.dataset.counted === "true") {
+        element.textContent = formatNumber(Number(element.dataset.count || 0));
+      }
+    });
+  });
+
   leadForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const data = new FormData(leadForm);
@@ -338,16 +352,24 @@
     const phone = String(data.get("phone") || "").trim();
     const service = String(data.get("service") || "").trim();
     const message = String(data.get("message") || "").trim();
+    const labels = {
+      intro: i18n?.t("runtime.whatsapp.intro"),
+      name: i18n?.t("runtime.whatsapp.name"),
+      phone: i18n?.t("runtime.whatsapp.phone"),
+      service: i18n?.t("runtime.whatsapp.service"),
+      message: i18n?.t("runtime.whatsapp.message"),
+      opening: i18n?.t("runtime.form.openingWhatsapp")
+    };
 
     const text = [
-      "שלום מסודרות, אשמח שתחזרו אליי לקביעת תור.",
-      `שם: ${name}`,
-      `טלפון: ${phone}`,
-      `טיפול: ${service}`,
-      message ? `הודעה: ${message}` : ""
+      labels.intro,
+      `${labels.name}: ${name}`,
+      `${labels.phone}: ${phone}`,
+      `${labels.service}: ${service}`,
+      message ? `${labels.message}: ${message}` : ""
     ].filter(Boolean).join("\n");
 
-    formNote.textContent = "פותחת הודעת וואטסאפ מוכנה לשליחה.";
+    formNote.textContent = labels.opening;
     window.open(`${whatsappUrl}&text=${encodeURIComponent(text)}`, "_blank", "noopener");
   });
 
