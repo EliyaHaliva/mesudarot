@@ -11,6 +11,15 @@
     <meta name="robots" content="index, follow, max-image-preview:large" />
     <meta name="format-detection" content="telephone=yes" />
     <meta name="theme-color" content="#c01866" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="assets/logo.png"
+    />
+    <link
+      rel="apple-touch-icon"
+      href="assets/logo.png"
+    />
     <link rel="canonical" href="https://www.mesudarot-il.com/" />
     <link
       rel="alternate"
@@ -75,8 +84,6 @@
     />
     <link rel="stylesheet" href="styles.css" />
     <script defer src="i18n.js"></script>
-    <script defer src="assets/vendor/three.min.js"></script>
-    <script defer src="hero-scene.js"></script>
     <script defer src="script.js"></script>
     <script type="application/ld+json">
       {
@@ -88,11 +95,11 @@
             "name": "מסודרות Beauty & Cosmetics",
             "alternateName": "מסודרות",
             "url": "https://www.mesudarot-il.com/",
-            "logo": "https://www.mesudarot-il.com/assets/f172485c-9b9c-4d88-9d1c-9c1564a08c66.png",
+            "logo": "https://www.mesudarot-il.com/assets/logo.png",
             "image": [
               "https://www.mesudarot-il.com/assets/mesudarot-place.jpeg",
-              "https://www.mesudarot-il.com/assets/906.jpg",
-              "https://www.mesudarot-il.com/assets/902.jpg"
+              "https://www.mesudarot-il.com/assets/hero.jpeg",
+              "https://www.mesudarot-il.com/assets/generated/service-hands-ai.jpg"
             ],
             "description": "מסודרות הוא מכון יופי וקוסמטיקה בדיזנגוף סנטר תל אביב, עם טיפולי מניקור, פדיקור, פנים, הסרת שיער, לייזר ומועדון הטבות.",
             "telephone": "03-6209661",
@@ -340,7 +347,7 @@
       <nav class="main-nav" aria-label="ניווט ראשי">
         <a class="brand" href="#top" aria-label="מסודרות דף הבית">
           <img
-            src="assets/f172485c-9b9c-4d88-9d1c-9c1564a08c66.png"
+            src="assets/logo.png"
             width="400"
             height="215"
             alt="מסודרות Beauty & Cosmetics"
@@ -409,11 +416,15 @@
 
     <main id="main">
       <section class="hero" aria-labelledby="hero-title">
-        <div
-          class="hero-scene"
-          id="hero-scene"
-          aria-label="אנימציית תלת ממד של בקבוק לק, מברשת וציפורניים מבריקות במסודרות, מגיבה לתנועת העכבר."
-        ></div>
+        <div class="hero-visual" aria-hidden="true">
+          <img
+            class="hero-image"
+            src="assets/hero.jpeg"
+            alt=""
+            fetchpriority="high"
+            decoding="async"
+          />
+        </div>
         <div class="hero-vignette" aria-hidden="true"></div>
         <div class="hero-shell">
           <div class="hero-content">
@@ -1418,7 +1429,7 @@
     <footer class="site-footer">
       <div class="footer-inner">
         <img
-          src="assets/f172485c-9b9c-4d88-9d1c-9c1564a08c66.png"
+          src="assets/logo.png"
           width="400"
           height="215"
           alt="מסודרות"

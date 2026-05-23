@@ -12,28 +12,26 @@
 
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const a11ySettingsKey = "mesudarotA11ySettings";
-  let reduceMotion = reduceMotionQuery.matches || getStoredReduceMotionSetting();
-  let targetScroll = 0;
-  let scrollProgress = 0;
-
   const pointer = { x: 0, y: 0 };
   const easedPointer = { x: 0, y: 0 };
   const clock = new THREE.Clock();
   const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(52, 1, 0.1, 80);
+  const camera = new THREE.PerspectiveCamera(47, 1, 0.1, 80);
   const root = new THREE.Group();
-  const bottleGroup = new THREE.Group();
-  const capGroup = new THREE.Group();
+  const vanityGroup = new THREE.Group();
+  const productGroup = new THREE.Group();
   const brushGroup = new THREE.Group();
-  const nailGroup = new THREE.Group();
-  const sparkleGroup = new THREE.Group();
-  const sparkles = [];
+  const floatGroup = new THREE.Group();
+  const floaters = [];
+  const shinePieces = [];
 
   let renderer;
-  let paintFill;
-  let polishDrop;
-  let brushTip;
-  let bottleLabelMaterial;
+  let reduceMotion = reduceMotionQuery.matches || getStoredReduceMotionSetting();
+  let sceneDirectionSign = getDirectionSign();
+  let heroWidth = 1;
+  let targetScroll = 0;
+  let scrollProgress = 0;
+  let isRunning = true;
 
   function getStoredReduceMotionSetting() {
     try {
@@ -42,6 +40,10 @@
     } catch (error) {
       return false;
     }
+  }
+
+  function getDirectionSign() {
+    return document.documentElement.dir === "ltr" ? 1 : -1;
   }
 
   try {
@@ -55,7 +57,6 @@
     return;
   }
 
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.75));
   renderer.setClearColor(0x000000, 0);
 
   if ("outputColorSpace" in renderer && THREE.SRGBColorSpace) {
@@ -64,108 +65,159 @@
     renderer.outputEncoding = THREE.sRGBEncoding;
   }
 
+  if ("toneMapping" in renderer && THREE.ACESFilmicToneMapping) {
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.92;
+  }
+
   renderer.domElement.setAttribute("role", "img");
   renderer.domElement.tabIndex = -1;
   container.appendChild(renderer.domElement);
 
-  function updateCanvasLabel() {
-    renderer.domElement.setAttribute(
-      "aria-label",
-      i18n?.t("runtime.heroSceneCanvasLabel", container.getAttribute("aria-label") || "")
-    );
-  }
+  scene.add(root);
+  root.add(vanityGroup, productGroup, brushGroup, floatGroup);
+  camera.position.set(0, 0.08, 8.7);
 
-  function updateBottleLabelTexture() {
-    if (!bottleLabelMaterial || !bottleLabelMaterial.map) return;
+  const materials = createMaterials();
+  const geometries = createGeometries();
 
-    const nextTexture = createLabelTexture();
-
-    if (!nextTexture) return;
-
-    bottleLabelMaterial.map.dispose?.();
-    bottleLabelMaterial.map = nextTexture;
-    bottleLabelMaterial.needsUpdate = true;
-  }
-
+  addVanityMirror();
+  addBeautyProducts();
+  addBrushAndTowel();
+  addFloatingAccents();
+  addLights();
   updateCanvasLabel();
+
   i18n?.ready?.then(() => {
     updateCanvasLabel();
-    updateBottleLabelTexture();
+    syncDirection();
   });
+
   window.addEventListener("mesudarot:language-change", () => {
     updateCanvasLabel();
-    updateBottleLabelTexture();
+    syncDirection();
   });
 
-  camera.position.set(0, 0.05, 8.7);
-  scene.add(root);
-  root.add(nailGroup, bottleGroup, capGroup, brushGroup, sparkleGroup);
+  function createMaterials() {
+    const roseGold = new THREE.MeshStandardMaterial({
+      color: 0xe0a26e,
+      roughness: 0.26,
+      metalness: 0.52
+    });
 
-  const polish = new THREE.MeshPhysicalMaterial({
-    color: 0xff167f,
-    emissive: 0x5a002c,
-    emissiveIntensity: 0.24,
-    roughness: 0.18,
-    metalness: 0.05,
-    clearcoat: 1,
-    clearcoatRoughness: 0.1
-  });
+    const deepRose = new THREE.MeshStandardMaterial({
+      color: 0xc01866,
+      emissive: 0x3a071d,
+      emissiveIntensity: 0.12,
+      roughness: 0.34,
+      metalness: 0.08
+    });
 
-  const hotPink = new THREE.MeshStandardMaterial({
-    color: 0xff4fa3,
-    emissive: 0x541034,
-    emissiveIntensity: 0.18,
-    roughness: 0.28,
-    metalness: 0.04
-  });
+    const softPink = new THREE.MeshPhysicalMaterial({
+      color: 0xffb7cf,
+      emissive: 0x30111f,
+      emissiveIntensity: 0.05,
+      roughness: 0.22,
+      metalness: 0.02,
+      clearcoat: 1,
+      clearcoatRoughness: 0.12
+    });
 
-  const capMaterial = new THREE.MeshStandardMaterial({
-    color: 0xd41470,
-    emissive: 0x4c0027,
-    emissiveIntensity: 0.2,
-    roughness: 0.22,
-    metalness: 0.12
-  });
+    const cream = new THREE.MeshStandardMaterial({
+      color: 0xffedf5,
+      roughness: 0.44,
+      metalness: 0.02
+    });
 
-  const glass = new THREE.MeshPhysicalMaterial({
-    color: 0xfff7fc,
-    transparent: true,
-    opacity: 0.58,
-    roughness: 0.03,
-    metalness: 0,
-    clearcoat: 1,
-    clearcoatRoughness: 0.06
-  });
+    const glass = new THREE.MeshPhysicalMaterial({
+      color: 0xfff8fb,
+      transparent: true,
+      opacity: 0.46,
+      roughness: 0.04,
+      metalness: 0,
+      clearcoat: 1,
+      clearcoatRoughness: 0.04
+    });
 
-  const pearl = new THREE.MeshPhysicalMaterial({
-    color: 0xfff7fc,
-    roughness: 0.16,
-    metalness: 0.02,
-    clearcoat: 0.82,
-    clearcoatRoughness: 0.16
-  });
+    const mirror = new THREE.MeshPhysicalMaterial({
+      color: 0xffe6f1,
+      transparent: true,
+      opacity: 0.52,
+      roughness: 0.02,
+      metalness: 0.18,
+      clearcoat: 1,
+      clearcoatRoughness: 0.04
+    });
 
-  const nailBaseMaterial = new THREE.MeshStandardMaterial({
-    color: 0xffe9f4,
-    emissive: 0x301120,
-    emissiveIntensity: 0.06,
-    roughness: 0.3,
-    metalness: 0.03
-  });
+    const mirrorGlow = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.2,
+      depthWrite: false
+    });
 
-  const gold = new THREE.MeshStandardMaterial({
-    color: 0xf5c86b,
-    roughness: 0.26,
-    metalness: 0.35
-  });
+    const graphite = new THREE.MeshStandardMaterial({
+      color: 0x170d15,
+      roughness: 0.32,
+      metalness: 0.28
+    });
 
-  const violet = new THREE.MeshStandardMaterial({
-    color: 0xa78bfa,
-    emissive: 0x24104f,
-    emissiveIntensity: 0.1,
-    roughness: 0.34,
-    metalness: 0.1
-  });
+    const towel = new THREE.MeshStandardMaterial({
+      color: 0xf9d7df,
+      roughness: 0.68,
+      metalness: 0.01
+    });
+
+    const shadow = new THREE.MeshBasicMaterial({
+      color: 0x160d17,
+      transparent: true,
+      opacity: 0.24,
+      depthWrite: false
+    });
+
+    const shimmer = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.52,
+      depthWrite: false
+    });
+
+    return {
+      roseGold,
+      deepRose,
+      softPink,
+      cream,
+      glass,
+      mirror,
+      mirrorGlow,
+      graphite,
+      towel,
+      shadow,
+      shimmer
+    };
+  }
+
+  function createGeometries() {
+    return {
+      shelf: createRoundedRectangleGeometry(3.24, 0.28, 0.12, 0.14),
+      mirrorGlass: new THREE.CircleGeometry(1, 72),
+      mirrorRim: new THREE.TorusGeometry(1, 0.038, 14, 128),
+      mirrorLight: new THREE.TorusGeometry(1.08, 0.012, 10, 128),
+      bottle: new THREE.CylinderGeometry(0.24, 0.3, 1.08, 40),
+      bottleLiquid: new THREE.CylinderGeometry(0.22, 0.27, 0.62, 40),
+      pump: new THREE.CylinderGeometry(0.065, 0.07, 0.24, 24),
+      spout: new THREE.BoxGeometry(0.34, 0.045, 0.045),
+      jar: new THREE.CylinderGeometry(0.42, 0.44, 0.34, 48),
+      jarLid: new THREE.CylinderGeometry(0.45, 0.45, 0.16, 48),
+      towelRoll: new THREE.CylinderGeometry(0.28, 0.28, 1.0, 40),
+      brushHandle: new THREE.CylinderGeometry(0.04, 0.04, 1.42, 26),
+      brushFerrule: new THREE.CylinderGeometry(0.1, 0.12, 0.26, 24),
+      brushBristles: new THREE.ConeGeometry(0.22, 0.42, 32),
+      pearl: new THREE.SphereGeometry(0.06, 18, 18),
+      softDrop: new THREE.SphereGeometry(0.12, 22, 22),
+      shadow: new THREE.SphereGeometry(1, 48, 18)
+    };
+  }
 
   function createRoundedRectangleGeometry(width, height, depth, radius) {
     if (!THREE.Shape || !THREE.ExtrudeGeometry) {
@@ -191,7 +243,7 @@
       depth,
       bevelEnabled: true,
       bevelSize: 0.025,
-      bevelThickness: 0.022,
+      bevelThickness: 0.018,
       bevelSegments: 5
     });
 
@@ -199,279 +251,215 @@
     return geometry;
   }
 
-  function createPaintStrokeGeometry(width, height) {
-    if (!THREE.Shape || !THREE.ShapeGeometry) {
-      return new THREE.PlaneGeometry(width, height);
-    }
+  function addVanityMirror() {
+    const mirrorGlass = new THREE.Mesh(geometries.mirrorGlass, materials.mirror);
+    mirrorGlass.position.set(-0.42, 0.18, -0.28);
+    mirrorGlass.scale.set(0.84, 1.18, 1);
+    vanityGroup.add(mirrorGlass);
 
-    const radius = height / 2;
-    const shape = new THREE.Shape();
-    shape.moveTo(radius, -radius);
-    shape.lineTo(width - radius, -radius);
-    shape.quadraticCurveTo(width, -radius, width, 0);
-    shape.quadraticCurveTo(width, radius, width - radius, radius);
-    shape.lineTo(radius, radius);
-    shape.quadraticCurveTo(0, radius, 0, 0);
-    shape.quadraticCurveTo(0, -radius, radius, -radius);
-    return new THREE.ShapeGeometry(shape, 32);
+    const rim = new THREE.Mesh(geometries.mirrorRim, materials.roseGold);
+    rim.position.copy(mirrorGlass.position);
+    rim.scale.set(0.84, 1.18, 1);
+    vanityGroup.add(rim);
+
+    const lightRing = new THREE.Mesh(geometries.mirrorLight, materials.mirrorGlow);
+    lightRing.position.set(-0.42, 0.18, -0.255);
+    lightRing.scale.set(0.84, 1.18, 1);
+    vanityGroup.add(lightRing);
+    shinePieces.push(lightRing);
+
+    const stand = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.055, 0.86, 24), materials.roseGold);
+    stand.position.set(-0.42, -1.08, -0.28);
+    vanityGroup.add(stand);
+
+    const base = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.6, 0.1, 48), materials.roseGold);
+    base.position.set(-0.42, -1.56, -0.28);
+    vanityGroup.add(base);
+
+    const reflection = new THREE.Mesh(new THREE.PlaneGeometry(0.52, 0.04), materials.shimmer.clone());
+    reflection.material.opacity = 0.42;
+    reflection.position.set(-0.72, 0.46, -0.22);
+    reflection.rotation.z = -0.45;
+    vanityGroup.add(reflection);
+    shinePieces.push(reflection);
   }
 
-  function createLabelTexture() {
-    if (!THREE.CanvasTexture) return null;
+  function addBeautyProducts() {
+    const shadow = new THREE.Mesh(geometries.shadow, materials.shadow);
+    shadow.position.set(0.36, -1.62, -0.42);
+    shadow.scale.set(1.72, 0.22, 0.06);
+    productGroup.add(shadow);
 
-    const canvas = document.createElement("canvas");
-    canvas.width = 512;
-    canvas.height = 256;
-    const context = canvas.getContext("2d");
+    const shelf = new THREE.Mesh(geometries.shelf, materials.cream);
+    shelf.position.set(0.3, -1.48, -0.36);
+    shelf.rotation.z = -0.02;
+    productGroup.add(shelf);
 
-    if (!context) return null;
+    const serum = new THREE.Group();
+    serum.position.set(0.5, -0.84, 0.02);
 
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    context.fillStyle = "rgba(255, 255, 255, 0.96)";
-    context.strokeStyle = "rgba(192, 24, 102, 0.28)";
-    context.lineWidth = 8;
+    const bottle = new THREE.Mesh(geometries.bottle, materials.glass);
+    serum.add(bottle);
 
-    context.beginPath();
-    if (typeof context.roundRect === "function") {
-      context.roundRect(28, 30, 456, 196, 38);
-    } else {
-      context.moveTo(66, 30);
-      context.lineTo(446, 30);
-      context.quadraticCurveTo(484, 30, 484, 68);
-      context.lineTo(484, 188);
-      context.quadraticCurveTo(484, 226, 446, 226);
-      context.lineTo(66, 226);
-      context.quadraticCurveTo(28, 226, 28, 188);
-      context.lineTo(28, 68);
-      context.quadraticCurveTo(28, 30, 66, 30);
-    }
-    context.fill();
-    context.stroke();
+    const liquid = new THREE.Mesh(geometries.bottleLiquid, materials.softPink);
+    liquid.position.y = -0.2;
+    serum.add(liquid);
 
-    context.direction = i18n?.getDirection?.() === "rtl" ? "rtl" : "ltr";
-    context.textAlign = "center";
-    context.fillStyle = "#c01866";
-    context.font = "700 58px Arial";
-    context.fillText(i18n?.t("runtime.bottleLabel.brand") || "", 256, 116);
-    context.fillStyle = "#97174e";
-    context.font = "600 30px Arial";
-    context.fillText(i18n?.t("runtime.bottleLabel.product") || "", 256, 160);
-    context.fillStyle = "#f5c86b";
-    context.fillRect(172, 184, 168, 8);
+    const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.2, 0.12, 32), materials.roseGold);
+    collar.position.y = 0.58;
+    serum.add(collar);
 
-    const texture = new THREE.CanvasTexture(canvas);
-    if ("colorSpace" in texture && THREE.SRGBColorSpace) {
-      texture.colorSpace = THREE.SRGBColorSpace;
-    }
-    texture.needsUpdate = true;
-    return texture;
+    const pump = new THREE.Mesh(geometries.pump, materials.roseGold);
+    pump.position.y = 0.76;
+    serum.add(pump);
+
+    const spout = new THREE.Mesh(geometries.spout, materials.roseGold);
+    spout.position.set(0.16, 0.88, 0);
+    serum.add(spout);
+
+    const label = new THREE.Mesh(createRoundedRectangleGeometry(0.38, 0.22, 0.012, 0.045), materials.cream);
+    label.position.set(0, -0.08, 0.31);
+    serum.add(label);
+
+    serum.rotation.set(0.02, -0.18, -0.03);
+    productGroup.add(serum);
+
+    const jar = new THREE.Group();
+    jar.position.set(1.12, -1.16, 0.08);
+
+    const jarBody = new THREE.Mesh(geometries.jar, materials.glass);
+    jar.add(jarBody);
+
+    const jarCream = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.37, 0.18, 44), materials.softPink);
+    jarCream.position.y = -0.04;
+    jar.add(jarCream);
+
+    const jarLid = new THREE.Mesh(geometries.jarLid, materials.roseGold);
+    jarLid.position.y = 0.25;
+    jar.add(jarLid);
+
+    const jarHighlight = new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.025, 0.012), materials.shimmer.clone());
+    jarHighlight.material.opacity = 0.34;
+    jarHighlight.position.set(-0.04, 0.02, 0.42);
+    jarHighlight.rotation.z = -0.08;
+    jar.add(jarHighlight);
+    shinePieces.push(jarHighlight);
+
+    productGroup.add(jar);
   }
 
-  function addBottle() {
-    const body = new THREE.Mesh(createRoundedRectangleGeometry(1.14, 1.58, 0.58, 0.18), glass);
-    body.position.set(-0.9, 0.05, 0);
-    bottleGroup.add(body);
+  function addBrushAndTowel() {
+    const towel = new THREE.Mesh(geometries.towelRoll, materials.towel);
+    towel.position.set(-0.9, -1.37, 0.04);
+    towel.rotation.set(0, 0, Math.PI / 2);
+    brushGroup.add(towel);
 
-    const outline = new THREE.LineSegments(
-      new THREE.EdgesGeometry(body.geometry),
-      new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.48 })
-    );
-    body.add(outline);
+    const towelEdgeA = new THREE.Mesh(new THREE.TorusGeometry(0.28, 0.012, 10, 48), materials.cream);
+    towelEdgeA.position.set(-1.4, -1.37, 0.04);
+    towelEdgeA.rotation.y = Math.PI / 2;
+    brushGroup.add(towelEdgeA);
 
-    const liquidCore = new THREE.Mesh(createRoundedRectangleGeometry(0.86, 0.88, 0.46, 0.12), polish);
-    liquidCore.position.set(-0.9, -0.24, 0.035);
-    bottleGroup.add(liquidCore);
+    const towelEdgeB = towelEdgeA.clone();
+    towelEdgeB.position.x = -0.4;
+    brushGroup.add(towelEdgeB);
 
-    const liquidGlow = new THREE.Mesh(createRoundedRectangleGeometry(0.66, 0.5, 0.03, 0.08), hotPink);
-    liquidGlow.position.set(-0.9, -0.36, 0.288);
-    liquidGlow.material = hotPink.clone();
-    liquidGlow.material.transparent = true;
-    liquidGlow.material.opacity = 0.72;
-    bottleGroup.add(liquidGlow);
-
-    const shoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.5, 0.26, 36), glass);
-    shoulder.position.set(-0.9, 0.88, 0);
-    bottleGroup.add(shoulder);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.23, 0.25, 0.32, 36), pearl);
-    neck.position.set(-0.9, 1.14, 0);
-    bottleGroup.add(neck);
-
-    const labelTexture = createLabelTexture();
-    bottleLabelMaterial = labelTexture
-      ? new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true })
-      : pearl;
-    const label = new THREE.Mesh(new THREE.PlaneGeometry(0.78, 0.42), bottleLabelMaterial);
-    label.position.set(-0.9, 0.02, 0.324);
-    bottleGroup.add(label);
-
-    const highlight = new THREE.Mesh(new THREE.BoxGeometry(0.045, 1.08, 0.018), pearl);
-    highlight.material = pearl.clone();
-    highlight.material.transparent = true;
-    highlight.material.opacity = 0.56;
-    highlight.position.set(-1.27, 0.05, 0.322);
-    bottleGroup.add(highlight);
-  }
-
-  function addCapAndBrush() {
-    const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.31, 0.34, 0.92, 48), capMaterial);
-    cap.position.set(0, 0, 0);
-    capGroup.add(cap);
-
-    [-0.22, 0.04, 0.28].forEach((y) => {
-      const band = new THREE.Mesh(new THREE.TorusGeometry(0.333, 0.018, 12, 72), gold);
-      band.position.set(0, y, 0);
-      band.rotation.x = Math.PI / 2;
-      capGroup.add(band);
-    });
-
-    const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.036, 0.036, 1.38, 24), pearl);
-    stem.position.set(0, -0.94, 0.02);
-    capGroup.add(stem);
-
-    const bristles = new THREE.Mesh(new THREE.ConeGeometry(0.1, 0.34, 28), polish);
-    bristles.position.set(0, -1.73, 0.02);
-    bristles.scale.set(0.8, 1, 0.44);
-    capGroup.add(bristles);
-
-    capGroup.position.set(-0.9, 1.54, 0.02);
-
-    const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 1.7, 28), pearl);
-    handle.rotation.set(0.16, 0, -0.78);
+    const handle = new THREE.Mesh(geometries.brushHandle, materials.graphite);
+    handle.position.set(0.0, -1.15, 0.26);
+    handle.rotation.set(0.18, 0, -0.92);
     brushGroup.add(handle);
 
-    const ferrule = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.095, 0.28, 24), gold);
-    ferrule.position.set(0.56, -0.56, 0.02);
-    ferrule.rotation.set(0.16, 0, -0.78);
+    const ferrule = new THREE.Mesh(geometries.brushFerrule, materials.roseGold);
+    ferrule.position.set(0.46, -1.56, 0.28);
+    ferrule.rotation.set(0.18, 0, -0.92);
     brushGroup.add(ferrule);
 
-    brushTip = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.38, 28), polish);
-    brushTip.position.set(0.76, -0.84, 0.04);
-    brushTip.rotation.set(0.16, 0, -0.78);
-    brushTip.scale.set(0.86, 1, 0.45);
-    brushGroup.add(brushTip);
-
-    polishDrop = new THREE.Mesh(new THREE.SphereGeometry(0.12, 28, 28), polish);
-    polishDrop.position.set(0.84, -1.04, 0.08);
-    polishDrop.scale.set(0.7, 1.04, 0.7);
-    brushGroup.add(polishDrop);
+    const bristles = new THREE.Mesh(geometries.brushBristles, materials.deepRose);
+    bristles.position.set(0.7, -1.78, 0.28);
+    bristles.rotation.set(Math.PI + 0.18, 0, -0.92);
+    bristles.scale.set(0.78, 1, 0.58);
+    brushGroup.add(bristles);
   }
 
-  function createNailGeometry() {
-    if (THREE.Shape && THREE.ExtrudeGeometry) {
-      const shape = new THREE.Shape();
-      shape.moveTo(-1.22, -0.42);
-      shape.bezierCurveTo(-1.18, -0.9, -0.55, -1.08, 0, -1.05);
-      shape.bezierCurveTo(0.62, -1.05, 1.22, -0.86, 1.26, -0.42);
-      shape.bezierCurveTo(1.34, 0.28, 0.62, 0.58, 0, 0.6);
-      shape.bezierCurveTo(-0.68, 0.58, -1.34, 0.28, -1.22, -0.42);
-      return new THREE.ExtrudeGeometry(shape, {
-        depth: 0.06,
-        bevelEnabled: true,
-        bevelSize: 0.025,
-        bevelThickness: 0.018,
-        bevelSegments: 8
-      });
-    }
+  function addFloatingAccents() {
+    const accents = [
+      { x: -1.36, y: 1.2, z: -0.05, s: 0.44, material: materials.cream, phase: 0.1 },
+      { x: 0.92, y: 1.2, z: 0.26, s: 0.34, material: materials.roseGold, phase: 0.9 },
+      { x: 1.5, y: 0.36, z: 0.18, s: 0.46, material: materials.softPink, phase: 1.7 },
+      { x: -1.62, y: -0.34, z: 0.16, s: 0.36, material: materials.deepRose, phase: 2.6 },
+      { x: 1.62, y: -0.7, z: -0.04, s: 0.3, material: materials.cream, phase: 3.4 },
+      { x: -0.05, y: 1.52, z: 0.04, s: 0.26, material: materials.roseGold, phase: 4.2 }
+    ];
 
-    return new THREE.SphereGeometry(1, 48, 48);
+    accents.forEach((definition, index) => {
+      const geometry = index % 2 ? geometries.pearl : geometries.softDrop;
+      const accent = new THREE.Mesh(geometry, definition.material);
+      accent.position.set(definition.x, definition.y, definition.z);
+      accent.scale.setScalar(definition.s);
+      accent.userData.base = accent.position.clone();
+      accent.userData.phase = definition.phase;
+      accent.userData.spin = index % 2 ? -1 : 1;
+      floatGroup.add(accent);
+      floaters.push(accent);
+    });
   }
 
-  function addNailAndPaint() {
-    const nailBase = new THREE.Mesh(createNailGeometry(), nailBaseMaterial);
-    nailBase.position.set(0.55, -1.22, 0.06);
-    nailBase.rotation.set(0.12, -0.16, -0.03);
-    nailBase.scale.set(0.9, 0.46, 0.58);
-    nailGroup.add(nailBase);
+  function addLights() {
+    scene.add(new THREE.AmbientLight(0xffdcec, 0.86));
 
-    const strokeGeometry = createPaintStrokeGeometry(2.18, 0.4);
-    const paintTrack = new THREE.Mesh(strokeGeometry, pearl);
-    paintTrack.material = pearl.clone();
-    paintTrack.material.transparent = true;
-    paintTrack.material.opacity = 0.28;
-    paintTrack.position.set(-0.54, -1.2, 0.14);
-    paintTrack.rotation.z = -0.03;
-    nailGroup.add(paintTrack);
+    const keyLight = new THREE.DirectionalLight(0xffffff, 1.65);
+    keyLight.position.set(-3.2, 4.5, 5.6);
+    scene.add(keyLight);
 
-    paintFill = new THREE.Mesh(strokeGeometry.clone(), polish);
-    paintFill.position.set(-0.54, -1.2, 0.18);
-    paintFill.rotation.z = -0.03;
-    paintFill.scale.set(0.001, 1, 1);
-    nailGroup.add(paintFill);
+    const roseLight = new THREE.PointLight(0xff5fa6, 28, 16);
+    roseLight.position.set(-2.7, -0.8, 3.2);
+    scene.add(roseLight);
 
-    const shine = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.035, 0.02), pearl);
-    shine.material = pearl.clone();
-    shine.material.transparent = true;
-    shine.material.opacity = 0.68;
-    shine.position.set(0.08, -1.02, 0.21);
-    shine.rotation.z = -0.03;
-    nailGroup.add(shine);
+    const goldLight = new THREE.PointLight(0xffd28a, 18, 14);
+    goldLight.position.set(2.5, 1.7, 3.2);
+    scene.add(goldLight);
+
+    const rimLight = new THREE.DirectionalLight(0xffffff, 0.74);
+    rimLight.position.set(3.2, 2.8, -1.4);
+    scene.add(rimLight);
   }
 
-  function addSparkles() {
-    const materials = [pearl, hotPink, gold, violet];
-    const geometry = new THREE.SphereGeometry(0.055, 16, 16);
-
-    for (let i = 0; i < 34; i += 1) {
-      const sparkle = new THREE.Mesh(geometry, materials[i % materials.length]);
-      const angle = i * 0.78;
-      const radius = 1.6 + (i % 5) * 0.22;
-      const base = new THREE.Vector3(
-        Math.cos(angle) * radius - 0.15,
-        Math.sin(i * 1.19) * 1.12 - 0.15,
-        Math.sin(angle) * radius * 0.24
-      );
-      sparkle.position.copy(base);
-      sparkle.userData.base = base;
-      sparkle.userData.phase = i * 0.55;
-      sparkle.scale.setScalar(0.6 + (i % 4) * 0.12);
-      sparkleGroup.add(sparkle);
-      sparkles.push(sparkle);
-    }
-
-    const orbit = new THREE.Mesh(new THREE.TorusGeometry(2.08, 0.025, 16, 160), glass);
-    orbit.rotation.set(1.32, 0.1, -0.22);
-    sparkleGroup.add(orbit);
+  function updateCanvasLabel() {
+    renderer.domElement.setAttribute(
+      "aria-label",
+      i18n?.t("runtime.heroSceneCanvasLabel", container.getAttribute("aria-label") || "")
+    );
   }
 
-  addBottle();
-  addCapAndBrush();
-  addNailAndPaint();
-  addSparkles();
-
-  scene.add(new THREE.AmbientLight(0xffe8f4, 1.32));
-
-  const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
-  keyLight.position.set(-3.2, 4.4, 5.6);
-  scene.add(keyLight);
-
-  const pinkLight = new THREE.PointLight(0xff4fa3, 58, 18);
-  pinkLight.position.set(-3.2, -1.2, 3.6);
-  scene.add(pinkLight);
-
-  const violetLight = new THREE.PointLight(0xa78bfa, 34, 16);
-  violetLight.position.set(3.2, 2.2, 3);
-  scene.add(violetLight);
-
-  const pointerLight = new THREE.PointLight(0xffd6e8, 22, 10);
-  scene.add(pointerLight);
+  function syncDirection() {
+    sceneDirectionSign = getDirectionSign();
+    resize();
+  }
 
   function updateScrollProgress() {
-    const scrollRange = Math.max(1, window.innerHeight * 0.86);
+    const scrollRange = Math.max(1, window.innerHeight * 0.9);
     targetScroll = THREE.MathUtils.clamp(window.scrollY / scrollRange, 0, 1);
   }
 
   function resize() {
     const rect = container.getBoundingClientRect();
-    const width = Math.max(1, rect.width);
-    const height = Math.max(1, rect.height);
-    renderer.setSize(width, height, false);
-    camera.aspect = width / height;
+    heroWidth = Math.max(1, rect.width);
+    const heroHeight = Math.max(1, rect.height);
+
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, heroWidth < 720 ? 1.35 : 1.65));
+    renderer.setSize(heroWidth, heroHeight, false);
+
+    camera.aspect = heroWidth / heroHeight;
+    camera.fov = heroWidth < 720 ? 53 : heroWidth < 1040 ? 50 : 47;
+    camera.position.z = heroWidth < 720 ? 9.1 : 8.55;
     camera.updateProjectionMatrix();
 
-    const scale = width < 680 ? 0.82 : width < 1040 ? 0.92 : 1;
-    root.scale.setScalar(scale);
-    root.position.set(width < 760 ? 0.02 : width < 1040 ? -0.62 : -2.08, width < 760 ? -0.24 : -0.02, 0);
+    const sign = sceneDirectionSign;
+    const sceneScale = heroWidth < 520 ? 0.76 : heroWidth < 760 ? 0.84 : heroWidth < 1040 ? 0.94 : 1.08;
+    const sceneX = heroWidth < 720 ? sign * 0.2 : heroWidth < 1040 ? sign * 1.18 : sign * 2.08;
+    const sceneY = heroWidth < 720 ? 0.18 : heroWidth < 1040 ? 0.02 : -0.02;
+
+    root.scale.setScalar(sceneScale);
+    root.position.set(sceneX, sceneY, 0);
     updateScrollProgress();
   }
 
@@ -492,59 +480,60 @@
     if (touch) updatePointer(touch.clientX, touch.clientY);
   }
 
-  function render() {
+  function renderFrame() {
     const elapsed = clock.getElapsedTime();
-
-    if (reduceMotion) {
-      scrollProgress = targetScroll;
-      easedPointer.x = 0;
-      easedPointer.y = 0;
-    } else {
-      scrollProgress += (targetScroll - scrollProgress) * 0.075;
-      easedPointer.x += (pointer.x - easedPointer.x) * 0.08;
-      easedPointer.y += (pointer.y - easedPointer.y) * 0.08;
-    }
-
-    const open = THREE.MathUtils.smoothstep(scrollProgress, 0, 0.58);
-    const paint = THREE.MathUtils.smoothstep(scrollProgress, 0.22, 1);
     const drift = reduceMotion ? 0 : elapsed;
 
-    capGroup.position.set(-0.9 + open * 0.92, 1.54 + open * 0.52, 0.02 + open * 0.12);
-    capGroup.rotation.set(-open * 0.14, open * 0.2, -open * 0.68 + easedPointer.x * 0.08);
-
-    brushGroup.position.set(-1.28 + paint * 2.12, 0.42 - paint * 1.05 + easedPointer.y * 0.04, 0.18);
-    brushGroup.rotation.set(0.1, easedPointer.x * 0.08, -0.55 + paint * 0.22 + Math.sin(drift * 1.1) * (reduceMotion ? 0 : 0.02));
-    brushGroup.visible = open > 0.2;
-
-    paintFill.scale.x = Math.max(0.001, paint);
-    paintFill.material.opacity = 0.78 + paint * 0.22;
-
-    if (polishDrop) {
-      polishDrop.scale.setScalar(0.75 + paint * 0.34);
-      polishDrop.visible = paint > 0.08;
+    if (reduceMotion) {
+      easedPointer.x = 0;
+      easedPointer.y = 0;
+      scrollProgress = targetScroll;
+    } else {
+      easedPointer.x += (pointer.x - easedPointer.x) * 0.075;
+      easedPointer.y += (pointer.y - easedPointer.y) * 0.075;
+      scrollProgress += (targetScroll - scrollProgress) * 0.065;
     }
 
-    root.rotation.y = easedPointer.x * 0.28 + Math.sin(drift * 0.28) * 0.045;
-    root.rotation.x = -easedPointer.y * 0.14 + Math.sin(drift * 0.22) * 0.025;
-    bottleGroup.rotation.z = Math.sin(drift * 0.45) * (reduceMotion ? 0 : 0.018);
-    nailGroup.rotation.z = -0.02 + easedPointer.x * 0.035;
+    const baseY = heroWidth < 720 ? 0.18 : heroWidth < 1040 ? 0.02 : -0.02;
+    const scrollLift = scrollProgress * (heroWidth < 720 ? 0.1 : 0.2);
+    const baseTurn = sceneDirectionSign * -0.15;
 
-    sparkleGroup.rotation.y = reduceMotion ? 0 : -elapsed * 0.06 + easedPointer.x * 0.12;
-    sparkles.forEach((sparkle) => {
-      const pulse = reduceMotion ? 0.86 : 0.86 + Math.sin(elapsed * 1.7 + sparkle.userData.phase) * 0.16;
-      sparkle.scale.setScalar(pulse * 0.86);
-      sparkle.position.y = sparkle.userData.base.y + (reduceMotion ? 0 : Math.sin(elapsed + sparkle.userData.phase) * 0.04);
+    root.rotation.y = baseTurn + easedPointer.x * 0.16 + Math.sin(drift * 0.22) * 0.028;
+    root.rotation.x = -0.02 - easedPointer.y * 0.08 + Math.sin(drift * 0.18) * 0.014;
+    root.position.y += baseY - scrollLift - root.position.y;
+
+    vanityGroup.rotation.y = -0.08 + easedPointer.x * 0.04;
+    productGroup.rotation.y = 0.08 + easedPointer.x * 0.055;
+    brushGroup.rotation.z = Math.sin(drift * 0.35) * 0.012;
+    floatGroup.rotation.y = -drift * 0.045 + easedPointer.x * 0.08;
+
+    floaters.forEach((floater) => {
+      const base = floater.userData.base;
+      const phase = floater.userData.phase || 0;
+      if (base) {
+        floater.position.y = base.y + (reduceMotion ? 0 : Math.sin(elapsed * 0.86 + phase) * 0.052);
+        floater.position.x = base.x + (reduceMotion ? 0 : Math.cos(elapsed * 0.56 + phase) * 0.026);
+      }
+      floater.rotation.y += reduceMotion ? 0 : 0.004 * (floater.userData.spin || 1);
     });
 
-    pointerLight.position.set(easedPointer.x * 2.4, easedPointer.y * 1.4, 3.5);
-    pointerLight.intensity = 18 + Math.abs(easedPointer.x) * 10 + paint * 8;
+    shinePieces.forEach((piece, index) => {
+      piece.material.opacity = reduceMotion
+        ? piece.material.opacity
+        : 0.28 + Math.sin(elapsed * 1.2 + index * 0.72) * 0.1;
+    });
 
-    camera.position.x = easedPointer.x * 0.32;
-    camera.position.y = 0.05 + easedPointer.y * 0.18;
-    camera.lookAt(0, -0.05, 0);
+    camera.position.x = easedPointer.x * 0.17;
+    camera.position.y = 0.08 + easedPointer.y * 0.1;
+    camera.lookAt(0, -0.02, 0);
 
     renderer.render(scene, camera);
-    window.requestAnimationFrame(render);
+  }
+
+  function animate() {
+    if (!isRunning) return;
+    renderFrame();
+    window.requestAnimationFrame(animate);
   }
 
   window.addEventListener("resize", resize, { passive: true });
@@ -556,24 +545,32 @@
   if (typeof reduceMotionQuery.addEventListener === "function") {
     reduceMotionQuery.addEventListener("change", (event) => {
       reduceMotion = event.matches || getStoredReduceMotionSetting();
+      renderFrame();
     });
   }
 
   window.addEventListener("mesudarot:a11y-change", (event) => {
     reduceMotion = reduceMotionQuery.matches || Boolean(event.detail?.settings?.["reduce-motion"]);
+    renderFrame();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    isRunning = !document.hidden;
+    if (isRunning) animate();
   });
 
   window.mesudarotHeroScene = {
     getState: () => ({
       pointer: { ...pointer },
-      scrollProgress,
-      capOpen: THREE.MathUtils.smoothstep(scrollProgress, 0, 0.58),
-      paintProgress: THREE.MathUtils.smoothstep(scrollProgress, 0.22, 1)
+      direction: sceneDirectionSign === 1 ? "ltr" : "rtl",
+      visualSide: sceneDirectionSign === 1 ? "right" : "left",
+      model: "beauty-studio-vanity",
+      scrollProgress
     })
   };
 
   resize();
   updateScrollProgress();
   container.classList.add("scene-ready");
-  render();
+  animate();
 })();

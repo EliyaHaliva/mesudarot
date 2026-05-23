@@ -494,98 +494,46 @@ body[data-direction="ltr"] .site-header .nav-cta {
 }
 
 .hero {
-  min-height: min(790px, 84svh);
+  min-height: 0;
   display: grid;
-  align-items: center;
+  align-items: start;
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  color: #fff;
-  background:
-    radial-gradient(
-      circle at 18% 42%,
-      rgba(255, 79, 163, 0.48),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 70% 18%,
-      rgba(167, 139, 250, 0.34),
-      transparent 34%
-    ),
-    linear-gradient(135deg, #5b1037 0%, #a9165a 48%, #32102d 100%);
+  color: var(--ink);
+  background: linear-gradient(180deg, #f8e5ea 0%, #fff6f9 48%, var(--paper) 100%);
 }
 
-.hero-scene {
-  position: absolute;
-  inset: 0;
+.hero-visual {
+  position: relative;
+  inset: auto;
   z-index: 0;
-  opacity: 0;
-  transform: scale(1.02);
-  transition:
-    opacity 420ms ease,
-    transform 600ms ease;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1983 / 793;
+  pointer-events: none;
 }
 
-.hero-scene.scene-ready {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.hero-scene canvas {
+.hero-image {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-.hero-scene-fallback {
-  opacity: 1;
-  background: url("assets/802-1024x768.jpg") center / cover no-repeat;
+  object-fit: contain;
+  object-position: center top;
 }
 
 .hero-vignette {
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
+  height: auto;
+  aspect-ratio: 1983 / 793;
   z-index: 1;
   pointer-events: none;
-  background:
-    linear-gradient(
-      90deg,
-      rgba(17, 10, 18, 0.06) 0%,
-      rgba(17, 10, 18, 0.26) 47%,
-      rgba(17, 10, 18, 0.84) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(17, 16, 25, 0.34),
-      rgba(17, 16, 25, 0.03) 42%,
-      rgba(17, 16, 25, 0.32)
-    );
-}
-
-html[dir="ltr"] .hero-vignette {
-  background:
-    linear-gradient(
-      270deg,
-      rgba(17, 10, 18, 0.06) 0%,
-      rgba(17, 10, 18, 0.26) 47%,
-      rgba(17, 10, 18, 0.84) 100%
-    ),
-    linear-gradient(
-      0deg,
-      rgba(17, 16, 25, 0.34),
-      rgba(17, 16, 25, 0.03) 42%,
-      rgba(17, 16, 25, 0.32)
-    );
+  background: linear-gradient(0deg, rgba(53, 7, 29, 0.14), rgba(255, 255, 255, 0) 34%);
 }
 
 .hero::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: 112px;
-  z-index: 1;
-  background: linear-gradient(0deg, var(--paper), rgba(251, 250, 252, 0));
-  pointer-events: none;
+  display: none;
 }
 
 @media (min-width: 1041px) {
@@ -625,7 +573,23 @@ html[dir="ltr"] .hero-vignette {
   }
 
   .hero {
-    min-height: calc(100svh - 136px);
+    min-height: 0;
+  }
+
+  .hero-shell {
+    min-height: 0;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-block: 42px 174px;
+  }
+
+  html[dir="ltr"] .hero-shell {
+    justify-content: center;
+  }
+
+  .hero-content {
+    max-width: min(760px, 72%);
   }
 }
 
@@ -633,13 +597,23 @@ html[dir="ltr"] .hero-vignette {
   position: relative;
   z-index: 2;
   width: min(100%, var(--container));
+  min-height: 0;
   margin: 0 auto;
-  padding: 82px 20px 104px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 42px 20px 104px;
 }
 
 .hero-content {
-  max-width: 680px;
+  max-width: min(760px, 72%);
+  margin-inline: auto;
+  text-align: center;
   animation: fade-up 620ms ease both;
+}
+
+html[dir="ltr"] .hero-shell {
+  justify-content: center;
 }
 
 .eyebrow {
@@ -650,50 +624,74 @@ html[dir="ltr"] .hero-vignette {
 }
 
 .hero .eyebrow {
-  color: #ffd6e8;
+  color: var(--brand-strong);
 }
 
 .hero-copy {
-  max-width: 640px;
+  max-width: 720px;
   margin-block-end: 28px;
-  color: rgba(255, 255, 255, 0.88);
+  margin-inline: auto;
+  color: #503745;
   font-size: clamp(1.15rem, 2.2vw, 1.42rem);
   line-height: 1.48;
+}
+
+.hero h1 {
+  color: #351625;
+}
+
+.hero .primary {
+  box-shadow: 0 18px 36px rgba(151, 23, 78, 0.22);
+}
+
+.hero .light {
+  color: var(--brand-strong);
+  border-color: rgba(151, 23, 78, 0.14);
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.hero .outline {
+  color: #351625;
+  border-color: rgba(151, 23, 78, 0.2);
+  background: rgba(255, 255, 255, 0.64);
+  backdrop-filter: blur(14px);
 }
 
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 12px;
 }
 
 .hero-highlights {
-  width: min(100%, 680px);
+  width: min(100%, 760px);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin: 34px 0 0;
+  margin: 34px auto 0;
 }
 
 .hero-highlights div {
   min-height: 84px;
   padding: 14px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: var(--radius);
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 250, 253, 0.84);
   backdrop-filter: blur(14px);
+  box-shadow: 0 16px 34px rgba(37, 23, 34, 0.08);
 }
 
 .hero-highlights dt {
-  color: rgba(255, 255, 255, 0.68);
+  color: rgba(80, 55, 69, 0.68);
   font-size: 0.9rem;
   font-weight: 800;
 }
 
 .hero-highlights dd {
   margin: 4px 0 0;
-  color: #fff;
-  font-size: 1.2rem;
+  color: #351625;
+  font-size: 1rem;
   font-weight: 900;
 }
 
@@ -753,16 +751,9 @@ html[dir="ltr"] .hero-vignette {
 }
 
 @media (min-width: 1041px) {
-  .hero-shell {
-    min-height: calc(100svh - 136px);
-    display: flex;
-    align-items: center;
-    padding-block: 72px 210px;
-  }
-
   .quick-actions {
-    margin: 0 auto -152px;
-    transform: translateY(calc(-100% - 40px));
+    margin: -48px auto 0;
+    transform: none;
   }
 
   .motion-ready .quick-actions.scroll-reveal,
@@ -2188,36 +2179,12 @@ tr:last-child td {
     justify-self: end;
   }
 
-  .hero-vignette {
-    background:
-      linear-gradient(
-        90deg,
-        rgba(17, 10, 18, 0.08) 0%,
-        rgba(17, 10, 18, 0.32) 44%,
-        rgba(17, 10, 18, 0.88) 100%
-      ),
-      linear-gradient(
-        0deg,
-        rgba(17, 16, 25, 0.42),
-        rgba(17, 16, 25, 0.06) 42%,
-        rgba(17, 16, 25, 0.34)
-      );
+  .hero-content {
+    max-width: min(650px, 74%);
   }
 
-  html[dir="ltr"] .hero-vignette {
-    background:
-      linear-gradient(
-        270deg,
-        rgba(17, 10, 18, 0.08) 0%,
-        rgba(17, 10, 18, 0.32) 44%,
-        rgba(17, 10, 18, 0.88) 100%
-      ),
-      linear-gradient(
-        0deg,
-        rgba(17, 16, 25, 0.42),
-        rgba(17, 16, 25, 0.06) 42%,
-        rgba(17, 16, 25, 0.34)
-      );
+  .hero-vignette {
+    background: linear-gradient(0deg, rgba(53, 7, 29, 0.14), rgba(255, 255, 255, 0) 34%);
   }
 
   .social-proof {
@@ -2341,27 +2308,73 @@ tr:last-child td {
   }
 
   .hero {
-    min-height: 84svh;
+    min-height: 0;
+    width: 100%;
+    max-width: 100vw;
+    display: block;
+    overflow: clip;
+    color: var(--ink);
+    background: linear-gradient(180deg, #fff6f9 0%, var(--paper) 100%);
+  }
+
+  .hero-visual {
+    position: relative;
+    inset: auto;
+    height: auto;
+    aspect-ratio: 1983 / 793;
+  }
+
+  .hero-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
   }
 
   .hero-vignette {
-    background: linear-gradient(
-      0deg,
-      rgba(17, 10, 18, 0.82) 0%,
-      rgba(17, 10, 18, 0.48) 48%,
-      rgba(17, 10, 18, 0.24) 100%
-    );
+    inset: 0 0 auto;
+    height: auto;
+    aspect-ratio: 1983 / 793;
+    background: linear-gradient(0deg, rgba(53, 7, 29, 0.12), rgba(255, 255, 255, 0));
+  }
+
+  .hero::after {
+    display: none;
   }
 
   .hero-shell {
+    min-height: 0;
+    display: grid;
+    justify-items: stretch;
     width: 100%;
     max-width: 100%;
-    padding: 62px 20px 86px;
+    padding: 30px 20px 86px;
+    text-align: center;
   }
 
   .hero-content {
-    width: min(100%, calc(100vw - 40px));
-    max-width: calc(100vw - 40px);
+    justify-self: stretch;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .hero h1 {
+    color: #351625;
+    font-size: clamp(3rem, 13vw, 3.9rem);
+    text-shadow: none;
+  }
+
+  .hero-copy {
+    margin-inline: auto;
+    color: #503745;
+    text-shadow: none;
+  }
+
+  .hero .outline {
+    color: #351625;
+    border-color: rgba(151, 23, 78, 0.2);
+    background: rgba(255, 255, 255, 0.64);
   }
 
   .hero-copy,
@@ -2377,6 +2390,7 @@ tr:last-child td {
   .hero-highlights {
     grid-template-columns: 1fr;
     margin-block-start: 24px;
+    text-align: start;
   }
 
   .hero-highlights div {
