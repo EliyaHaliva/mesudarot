@@ -240,17 +240,41 @@
     });
   }
 
-  menuToggle?.addEventListener("click", () => {
-    const isOpen = navLinks.classList.toggle("open");
+  function setMenuOpen(isOpen) {
+    if (!navLinks || !menuToggle) return;
+
+    navLinks.classList.toggle("open", isOpen);
     menuToggle.setAttribute("aria-expanded", String(isOpen));
     document.body.classList.toggle("menu-open", isOpen);
+  }
+
+  menuToggle?.addEventListener("click", () => {
+    setMenuOpen(!navLinks?.classList.contains("open"));
   });
 
   navLinks?.addEventListener("click", (event) => {
     if (event.target instanceof HTMLAnchorElement) {
-      navLinks.classList.remove("open");
-      menuToggle?.setAttribute("aria-expanded", "false");
-      document.body.classList.remove("menu-open");
+      setMenuOpen(false);
+    }
+  });
+
+  document.addEventListener("click", (event) => {
+    if (!navLinks?.classList.contains("open")) return;
+    if (event.target instanceof Element && event.target.closest(".main-nav")) return;
+
+    setMenuOpen(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || !navLinks?.classList.contains("open")) return;
+
+    setMenuOpen(false);
+    menuToggle?.focus();
+  });
+
+  window.addEventListener("resize", () => {
+    if (window.innerWidth > 1040) {
+      setMenuOpen(false);
     }
   });
 

@@ -82,9 +82,9 @@
       name="twitter:image"
       content="https://www.mesudarot-il.com/assets/mesudarot-place.jpeg"
     />
-    <link rel="stylesheet" href="styles.css" />
-    <script defer src="i18n.js"></script>
-    <script defer src="script.js"></script>
+    <link rel="stylesheet" href="styles.css?v=20260524-menu-row" />
+    <script defer src="i18n.js?v=20260524-menu-row"></script>
+    <script defer src="script.js?v=20260524-menu-row"></script>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
@@ -358,8 +358,13 @@
           type="button"
           aria-expanded="false"
           aria-controls="site-menu"
+          aria-label="תפריט"
         >
-          תפריט
+          <span class="menu-toggle-lines" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </span>
         </button>
         <div class="nav-links" id="site-menu">
           <a href="#services">טיפולים</a>
