@@ -542,7 +542,12 @@ body[data-direction="ltr"] .site-header .nav-cta {
   isolation: isolate;
   overflow: hidden;
   color: var(--ink);
-  background: linear-gradient(180deg, #f8e5ea 0%, #fff6f9 48%, var(--paper) 100%);
+  background: linear-gradient(
+    180deg,
+    #f8e5ea 0%,
+    #fff6f9 48%,
+    var(--paper) 100%
+  );
 }
 
 .hero-visual {
@@ -570,7 +575,11 @@ body[data-direction="ltr"] .site-header .nav-cta {
   aspect-ratio: 1983 / 793;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(0deg, rgba(53, 7, 29, 0.14), rgba(255, 255, 255, 0) 34%);
+  background: linear-gradient(
+    0deg,
+    rgba(53, 7, 29, 0.14),
+    rgba(255, 255, 255, 0) 34%
+  );
 }
 
 .hero::after {
@@ -716,6 +725,10 @@ html[dir="ltr"] .hero-shell {
 .hero-highlights div {
   min-height: 84px;
   padding: 14px 16px;
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.32);
   border-radius: var(--radius);
   background: rgba(255, 250, 253, 0.84);
@@ -734,6 +747,7 @@ html[dir="ltr"] .hero-shell {
   color: #351625;
   font-size: 1rem;
   font-weight: 900;
+  line-height: 1.35;
 }
 
 .quick-actions {
@@ -2234,7 +2248,11 @@ tr:last-child td {
   }
 
   .hero-vignette {
-    background: linear-gradient(0deg, rgba(53, 7, 29, 0.14), rgba(255, 255, 255, 0) 34%);
+    background: linear-gradient(
+      0deg,
+      rgba(53, 7, 29, 0.14),
+      rgba(255, 255, 255, 0) 34%
+    );
   }
 
   .social-proof {
@@ -2384,7 +2402,11 @@ tr:last-child td {
     inset: 0 0 auto;
     height: auto;
     aspect-ratio: 1983 / 793;
-    background: linear-gradient(0deg, rgba(53, 7, 29, 0.12), rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      0deg,
+      rgba(53, 7, 29, 0.12),
+      rgba(255, 255, 255, 0)
+    );
   }
 
   .hero::after {
@@ -2439,7 +2461,7 @@ tr:last-child td {
   .hero-highlights {
     grid-template-columns: 1fr;
     margin-block-start: 24px;
-    text-align: start;
+    text-align: center;
   }
 
   .hero-highlights div {

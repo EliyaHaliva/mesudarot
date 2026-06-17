@@ -1,5 +1,6 @@
 (function () {
   const menuToggle = document.querySelector(".menu-toggle");
+  const brandLink = document.querySelector(".brand");
   const navLinks = document.querySelector(".nav-links");
   const tabs = Array.from(document.querySelectorAll(".tab"));
   const panels = Array.from(document.querySelectorAll(".tab-panel"));
@@ -250,6 +251,21 @@
 
   menuToggle?.addEventListener("click", () => {
     setMenuOpen(!navLinks?.classList.contains("open"));
+  });
+
+  brandLink?.addEventListener("click", (event) => {
+    event.preventDefault();
+    setMenuOpen(false);
+
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: isReducedMotionEnabled() ? "auto" : "smooth"
+    });
+
+    if (window.location.hash) {
+      history.replaceState(null, "", `${window.location.pathname}${window.location.search}`);
+    }
   });
 
   navLinks?.addEventListener("click", (event) => {
