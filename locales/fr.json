@@ -445,9 +445,6 @@
     "בפינת המסך מופיע כפתור נגישות קבוע שפותח תפריט עם האפשרויות הבאות: הגדלת טקסט, הקטנת טקסט, ניגודיות גבוהה, הדגשת קישורים, ביטול אנימציות, גופן קריא, ריווח טקסט, הדגשת מיקוד מקלדת ואיפוס הגדרות. ההגדרות נשמרות בדפדפן לביקורים הבאים.": "Un bouton d’accessibilité fixe, dans le coin de l’écran, ouvre un menu avec les options suivantes : agrandir le texte, réduire le texte, contraste élevé, souligner les liens, désactiver les animations, police lisible, espacement du texte, mise en évidence du focus clavier et réinitialisation. Les réglages sont enregistrés dans le navigateur pour les prochaines visites.",
     "דפדפנים וטכנולוגיות מסייעות": "Navigateurs et technologies d’assistance",
     "האתר תוכנן לפעול בגרסאות העדכניות של Chrome, Safari, Edge ו-Firefox, במחשב ובטלפון נייד, ולשימוש עם קוראי מסך נפוצים.": "Le site est conçu pour fonctionner sur les versions récentes de Chrome, Safari, Edge et Firefox, sur ordinateur et sur mobile, ainsi qu’avec les lecteurs d’écran courants.",
-    "הסדרי נגישות במכון": "Accessibilité de l’institut",
-    "המכון ממוקם בדיזנגוף סנטר, רחוב דיזנגוף 50, תל אביב. הכניסה עם כלב נחייה או כלב שירות מותרת. מומלץ ליצור קשר לפני ההגעה כדי שנוכל להיערך מראש להתאמות הנדרשות, כגון סיוע בהגעה לעמדת הטיפול, תיאום מועד נוח או מסירת מידע בעל פה.": "L’institut se trouve au Dizengoff Center, 50 rue Dizengoff, Tel Aviv. Les chiens guides et chiens d’assistance sont acceptés. Nous vous recommandons de nous contacter avant votre venue afin de préparer les adaptations nécessaires, par exemple une aide pour accéder au poste de soin, un horaire adapté ou des informations données oralement.",
-    "מידע על הסדרי הנגישות במתחם דיזנגוף סנטר, כמו חניות נכים, מעליות ושירותים נגישים, ניתן לקבל גם מהנהלת הקניון.": "Les informations sur l’accessibilité du Dizengoff Center, comme les places de stationnement réservées, les ascenseurs et les toilettes accessibles, sont également disponibles auprès de la direction du centre commercial.",
     "שירות בערוצים חלופיים": "Service par d’autres canaux",
     "אם קשה לכם להשתמש באתר או במערכת הזמנת התורים, אפשר לקבוע תור, לקבל את המחירון ולברר כל פרט בטלפון, בוואטסאפ או במייל, והצוות ישמח לסייע.": "Si vous avez des difficultés à utiliser le site ou le système de réservation, vous pouvez prendre rendez-vous, obtenir la grille tarifaire et poser toute question par téléphone, WhatsApp ou e-mail ; notre équipe se fera un plaisir de vous aider.",
     "מגבלות נגישות ידועות": "Limites d’accessibilité connues",
@@ -463,6 +460,17 @@
     "כתובת: דיזנגוף 50, דיזנגוף סנטר, תל אביב": "Adresse : 50 Dizengoff, Dizengoff Center, Tel Aviv",
     "כדי שנוכל לטפל בפנייה ביעילות, מומלץ לצרף תיאור של הבעיה, את שם הרכיב או העמוד, וכן את סוג המכשיר, הדפדפן והטכנולוגיה המסייעת שבהם השתמשתם.": "Pour que nous puissions traiter votre demande efficacement, merci d’indiquer une description du problème, le nom de l’élément ou de la page, ainsi que l’appareil, le navigateur et la technologie d’assistance utilisés.",
     "במקרה של סתירה בין הנוסח העברי של הצהרה זו לבין תרגומה, הנוסח העברי הוא הקובע.": "En cas de contradiction entre la version hébraïque de cette déclaration et sa traduction, la version hébraïque prévaut.",
-    "תאריך עדכון ההצהרה: אוקטובר 2026.": "Dernière mise à jour de la déclaration : octobre 2026."
+    "תאריך עדכון ההצהרה: אוקטובר 2026.": "Dernière mise à jour de la déclaration : octobre 2026.",
+    "הסדרי נגישות בבית העסק": "Accessibilité de l’établissement",
+    "בית העסק ממוקם בדיזנגוף סנטר, תל אביב.": "L’établissement se trouve au Dizengoff Center, Tel Aviv.",
+    "כניסה לעסק:": "Entrée :",
+    "הכניסה לבית העסק היא ללא מדרגה.": "L’entrée de l’établissement est de plain-pied.",
+    "מעברים בתוך העסק:": "À l’intérieur :",
+    "קיימים מעברים המאפשרים מעבר בכיסא גלגלים.": "Les passages permettent la circulation en fauteuil roulant.",
+    "הגעה למתחם:": "Accès au centre :",
+    "בדיזנגוף סנטר קיימות כניסות נגישות, מעליות וחניות נכים.": "Le Dizengoff Center dispose d’entrées accessibles, d’ascenseurs et de places de stationnement réservées.",
+    "שירותים נגישים:": "Toilettes accessibles :",
+    "במתחם דיזנגוף סנטר קיימים שירותים נגישים. מומלץ לבדוק את מיקומם ביחס לבית העסק.": "Le Dizengoff Center dispose de toilettes accessibles. Nous vous recommandons de vérifier leur emplacement par rapport à l’établissement.",
+    "הכניסה עם כלב נחייה או כלב שירות מותרת. מומלץ ליצור קשר לפני ההגעה כדי שנוכל להיערך מראש להתאמות הנדרשות, כגון סיוע בהגעה לעמדת הטיפול, תיאום מועד נוח או מסירת מידע בעל פה.": "Les chiens guides et chiens d’assistance sont acceptés. Nous vous recommandons de nous contacter avant votre venue afin de préparer les adaptations nécessaires, par exemple une aide pour accéder au poste de soin, un horaire adapté ou des informations données oralement."
   }
 }
