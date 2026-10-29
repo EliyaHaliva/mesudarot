@@ -9,43 +9,22 @@
   const videoLightbox = document.querySelector("#video-lightbox");
   const videoLightboxPlayer = videoLightbox ? videoLightbox.querySelector("video") : null;
   const cookieBanner = document.querySelector("#cookie-banner");
-  const accessibilityToggle = document.querySelector(".accessibility-toggle");
-  const accessibilityPanel = document.querySelector("#accessibility-panel");
+  const mobileBar = document.querySelector(".mobile-bar");
   const countUpElements = Array.from(document.querySelectorAll(".count-up[data-count]"));
   const reviewCarousel = document.querySelector("[data-reviews-carousel]");
   const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const whatsappUrl = "https://api.whatsapp.com/send?phone=972526086083";
   const cookieChoiceKey = "mesudarotCookieChoice";
-  const a11ySettingsKey = "mesudarotA11ySettings";
   const i18n = window.MesudarotI18n;
-  const a11yClasses = {
-    "small-text": "a11y-small-text",
-    "large-text": "a11y-large-text",
-    "high-contrast": "a11y-high-contrast",
-    "underline-links": "a11y-underline-links",
-    "reduce-motion": "a11y-reduce-motion",
-    "readable-font": "a11y-readable-font",
-    "text-spacing": "a11y-text-spacing",
-    "focus-highlight": "a11y-focus-highlight"
-  };
-  const defaultA11ySettings = {
-    "small-text": false,
-    "large-text": false,
-    "high-contrast": false,
-    "underline-links": false,
-    "reduce-motion": false,
-    "readable-font": false,
-    "text-spacing": false,
-    "focus-highlight": false
-  };
-  const accessibilityStatementHash = "#accessibility";
-  let currentA11ySettings = {
-    ...defaultA11ySettings,
-    ...getSavedA11ySettings()
-  };
+  // The statement used to be a dialog on this page; old links now go to its own page.
+  const legacyStatementHash = "#accessibility";
+
+  if (window.location.hash === legacyStatementHash) {
+    window.location.replace("accessibility.html");
+  }
 
   function isReducedMotionEnabled() {
-    return reduceMotionQuery.matches || Boolean(currentA11ySettings["reduce-motion"]);
+    return reduceMotionQuery.matches || Boolean(window.MesudarotA11y?.getSettings().stopAnimations);
   }
 
   function setupScrollReveal() {
@@ -113,7 +92,9 @@
       });
     }, {
       rootMargin: "0px 0px -12% 0px",
-      threshold: 0.14
+      // Any visible part reveals: a ratio threshold never fires for sections taller than the
+      // viewport, which left them invisible at high zoom levels.
+      threshold: 0
     });
 
     revealTargets.forEach((target) => revealObserver.observe(target));
@@ -128,8 +109,20 @@
     });
   }
 
-  applyA11ySettings(false);
   setupScrollReveal();
+
+  // "Stop animations" reveals everything still waiting for its entrance effect. Turning it off
+  // restores the motion styles; every target is already revealed, so nothing hides again.
+  window.addEventListener("mesudarot:a11y-change", (event) => {
+    if (event.detail.settings.stopAnimations) {
+      document.documentElement.classList.remove("motion-ready");
+      document.querySelectorAll(".scroll-reveal, .scroll-reveal-item").forEach((target) => {
+        target.classList.add("is-visible");
+      });
+    } else if (!reduceMotionQuery.matches && "IntersectionObserver" in window) {
+      document.documentElement.classList.add("motion-ready");
+    }
+  });
 
   function setupReviewsCarousel() {
     if (!reviewCarousel) return;
@@ -392,8 +385,77 @@
     });
   });
 
+  const requiredLeadFields = leadForm ? Array.from(leadForm.querySelectorAll("[required]")) : [];
+  const phoneCharactersPattern = /^[0-9+\-\s()]+$/;
+
+  function getFieldErrorKey(field) {
+    const value = field.value.trim();
+
+    if (!value) return `${field.name}Required`;
+
+    if (field.name === "phone") {
+      const digitCount = value.replace(/\D/g, "").length;
+      const isValidPhone = phoneCharactersPattern.test(value) && digitCount >= 9 && digitCount <= 15;
+      return isValidPhone ? "" : "phoneInvalid";
+    }
+
+    return "";
+  }
+
+  function showFieldError(field, errorKey) {
+    const errorElement = document.getElementById(field.getAttribute("aria-describedby"));
+
+    field.dataset.errorKey = errorKey;
+
+    if (errorKey) {
+      field.setAttribute("aria-invalid", "true");
+    } else {
+      field.removeAttribute("aria-invalid");
+    }
+
+    if (errorElement) {
+      errorElement.textContent = errorKey ? i18n?.t(`runtime.form.errors.${errorKey}`) : "";
+      errorElement.hidden = !errorKey;
+    }
+  }
+
+  function validateLeadForm() {
+    return requiredLeadFields.filter((field) => {
+      const errorKey = getFieldErrorKey(field);
+      showFieldError(field, errorKey);
+      return Boolean(errorKey);
+    });
+  }
+
+  requiredLeadFields.forEach((field) => {
+    const revalidate = () => {
+      if (field.dataset.errorKey) {
+        showFieldError(field, getFieldErrorKey(field));
+      }
+    };
+
+    field.addEventListener("input", revalidate);
+    field.addEventListener("change", revalidate);
+  });
+
+  window.addEventListener("mesudarot:language-change", () => {
+    requiredLeadFields.forEach((field) => {
+      if (field.dataset.errorKey) {
+        showFieldError(field, field.dataset.errorKey);
+      }
+    });
+  });
+
   leadForm?.addEventListener("submit", (event) => {
     event.preventDefault();
+    const invalidFields = validateLeadForm();
+
+    if (invalidFields.length) {
+      formNote.textContent = i18n?.t("runtime.form.invalid");
+      invalidFields[0].focus();
+      return;
+    }
+
     const data = new FormData(leadForm);
     const name = String(data.get("name") || "").trim();
     const phone = String(data.get("phone") || "").trim();
@@ -439,6 +501,18 @@
   document.querySelectorAll("[data-video]").forEach((button) => {
     button.addEventListener("click", () => {
       if (!videoLightbox || !videoLightboxPlayer) return;
+      const videoTitle = button.querySelector("span")?.textContent.trim();
+      const videoDescription = document.getElementById(button.getAttribute("aria-describedby"));
+      const lightboxDescription = videoLightbox.querySelector("#video-lightbox-description");
+
+      if (videoTitle) {
+        videoLightbox.setAttribute("aria-label", videoTitle);
+      }
+
+      if (lightboxDescription) {
+        lightboxDescription.textContent = videoDescription?.textContent.trim() || "";
+      }
+
       videoLightboxPlayer.src = button.dataset.video;
       if (typeof videoLightbox.showModal === "function") {
         videoLightbox.showModal();
@@ -491,10 +565,33 @@
     });
   });
 
+  // Lets CSS keep focused content and the accessibility toggle clear of fixed bottom bars.
+  function updateFixedBottomInset() {
+    const coveredHeight = [cookieBanner, mobileBar].reduce((maxHeight, element) => {
+      if (!element || element.hidden || getComputedStyle(element).position !== "fixed") {
+        return maxHeight;
+      }
+
+      const rect = element.getBoundingClientRect();
+      return rect.height ? Math.max(maxHeight, window.innerHeight - rect.top) : maxHeight;
+    }, 0);
+
+    document.documentElement.style.setProperty("--fixed-bottom-inset", `${Math.ceil(coveredHeight)}px`);
+  }
+
+  if ("ResizeObserver" in window) {
+    const fixedBarObserver = new ResizeObserver(updateFixedBottomInset);
+    [cookieBanner, mobileBar].filter(Boolean).forEach((element) => fixedBarObserver.observe(element));
+  }
+
+  window.addEventListener("resize", updateFixedBottomInset);
+  updateFixedBottomInset();
+
   function setCookieBannerVisibility(isVisible) {
     if (!cookieBanner) return;
     cookieBanner.hidden = !isVisible;
     document.body.classList.toggle("cookie-visible", isVisible);
+    updateFixedBottomInset();
   }
 
   function saveCookieChoice(choice) {
@@ -523,113 +620,9 @@
     });
   });
 
-  function getSavedA11ySettings() {
-    const savedSettings = readStorage(a11ySettingsKey);
-    if (!savedSettings) return {};
-
-    try {
-      return JSON.parse(savedSettings);
-    } catch (error) {
-      return {};
-    }
-  }
-
-  function normalizeA11ySettings() {
-    if (currentA11ySettings["small-text"] && currentA11ySettings["large-text"]) {
-      currentA11ySettings["small-text"] = false;
-    }
-  }
-
-  function applyA11ySettings(shouldPersist = true) {
-    normalizeA11ySettings();
-
-    Object.entries(a11yClasses).forEach(([setting, className]) => {
-      document.body.classList.toggle(className, Boolean(currentA11ySettings[setting]));
-      document.documentElement.classList.toggle(className, Boolean(currentA11ySettings[setting]));
-      document.querySelectorAll(`[data-a11y-toggle="${setting}"]`).forEach((button) => {
-        button.setAttribute("aria-pressed", String(Boolean(currentA11ySettings[setting])));
-      });
-    });
-
-    if (currentA11ySettings["reduce-motion"]) {
-      document.documentElement.classList.remove("motion-ready");
-      document.querySelectorAll(".scroll-reveal, .scroll-reveal-item").forEach((target) => {
-        target.classList.add("is-visible");
-      });
-    }
-
-    if (shouldPersist) {
-      writeStorage(a11ySettingsKey, JSON.stringify(currentA11ySettings));
-    }
-
-    window.dispatchEvent(new CustomEvent("mesudarot:a11y-change", {
-      detail: { settings: { ...currentA11ySettings } }
-    }));
-  }
-
-  function closeA11yPanel() {
-    if (!accessibilityPanel || accessibilityPanel.hidden) return;
-    const hadFocus = accessibilityPanel.contains(document.activeElement);
-    accessibilityPanel.hidden = true;
-    accessibilityToggle?.setAttribute("aria-expanded", "false");
-
-    if (hadFocus) {
-      accessibilityToggle?.focus();
-    }
-  }
-
-  applyA11ySettings();
-
-  accessibilityToggle?.addEventListener("click", () => {
-    if (!accessibilityPanel) return;
-    const shouldOpen = accessibilityPanel.hidden;
-    accessibilityPanel.hidden = !shouldOpen;
-    accessibilityToggle.setAttribute("aria-expanded", String(shouldOpen));
-
-    if (shouldOpen) {
-      accessibilityPanel.querySelector("button")?.focus();
-    }
-  });
-
-  document.querySelector("[data-a11y-close]")?.addEventListener("click", closeA11yPanel);
-
-  if (window.location.hash === accessibilityStatementHash) {
-    openDialog("accessibility-modal");
-  }
-
-  document.querySelectorAll("[data-a11y-toggle]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const setting = button.dataset.a11yToggle;
-      currentA11ySettings[setting] = !currentA11ySettings[setting];
-
-      if (setting === "small-text" && currentA11ySettings[setting]) {
-        currentA11ySettings["large-text"] = false;
-      }
-
-      if (setting === "large-text" && currentA11ySettings[setting]) {
-        currentA11ySettings["small-text"] = false;
-      }
-
-      applyA11ySettings();
-    });
-  });
-
-  document.querySelector("#a11y-reset")?.addEventListener("click", () => {
-    currentA11ySettings = { ...defaultA11ySettings };
-    removeStorage(a11ySettingsKey);
-    applyA11ySettings();
-  });
-
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      if (!document.querySelector(".legal-dialog[open]")) {
-        closeA11yPanel();
-      }
-
-      if (videoLightbox?.open) {
-        closeVideoLightbox();
-      }
-
+    if (event.key === "Escape" && videoLightbox?.open) {
+      closeVideoLightbox();
     }
   });
 })();

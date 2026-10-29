@@ -38,6 +38,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* --fixed-bottom-inset is set by script.js from the visible fixed bottom bars. */
+  scroll-padding-block-end: min(calc(var(--fixed-bottom-inset, 0px) + 8px), 50svh);
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -57,7 +59,7 @@ body {
   color: var(--ink);
   font-family:
     "Heebo", "Assistant", "Rubik", "Noto Sans Hebrew", Arial, sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.65;
   max-width: 100%;
   overflow-x: clip;
@@ -68,84 +70,6 @@ body {
 
 body.cookie-visible {
   padding-bottom: 142px;
-}
-
-/* Text size options scale the root so rem-based sizes follow the body. */
-html.a11y-large-text {
-  font-size: 120%;
-}
-
-html.a11y-small-text {
-  font-size: 93.75%;
-}
-
-body.a11y-large-text,
-body.a11y-small-text {
-  font-size: 1rem;
-}
-
-html.a11y-readable-font body,
-html.a11y-readable-font .nav-links {
-  font-family: Arial, "Noto Sans Hebrew", sans-serif;
-}
-
-/* Text spacing values from WCAG 1.4.12. */
-html.a11y-text-spacing body :not(svg, svg *) {
-  line-height: 1.5 !important;
-  letter-spacing: 0.12em !important;
-  word-spacing: 0.16em !important;
-}
-
-html.a11y-text-spacing p {
-  margin-block-end: 2em !important;
-}
-
-html.a11y-focus-highlight :focus-visible {
-  outline: 4px solid #ffbf47 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 7px #111019 !important;
-}
-
-body.a11y-high-contrast {
-  --brand: #005fcc;
-  --brand-strong: #003f87;
-  --brand-soft: #e7f0ff;
-  --violet: #4c1d95;
-  --ink: #050505;
-  --ink-soft: #171717;
-  --muted: #2d2d2d;
-  --paper: #ffffff;
-  --surface: #ffffff;
-  --surface-soft: #f1f3f5;
-  --surface-tint: #ffffff;
-  --teal: #005f61;
-  --teal-soft: #e8f5f5;
-  --gold: #6f4f00;
-  --line: #1f2937;
-  --line-strong: #111827;
-}
-
-body.a11y-underline-links a {
-  text-decoration: underline;
-  text-underline-offset: 4px;
-}
-
-html.a11y-reduce-motion {
-  scroll-behavior: auto !important;
-}
-
-html.a11y-reduce-motion *,
-html.a11y-reduce-motion *::before,
-html.a11y-reduce-motion *::after {
-  animation: none !important;
-  scroll-behavior: auto !important;
-  transition: none !important;
-}
-
-html.a11y-reduce-motion .scroll-reveal,
-html.a11y-reduce-motion .scroll-reveal-item {
-  opacity: 1 !important;
-  translate: 0 0 !important;
 }
 
 img {
@@ -193,9 +117,15 @@ textarea {
   touch-action: manipulation;
 }
 
-:where(a, button, input, select, textarea):focus-visible {
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 3px solid var(--brand-strong);
   outline-offset: 3px;
+}
+
+/* The brand outline is too dark to see against these backgrounds. */
+.top-strip :focus-visible,
+.site-footer :focus-visible {
+  outline-color: #fff;
 }
 
 svg {
@@ -765,7 +695,7 @@ html[dir="ltr"] .hero-shell {
 }
 
 .hero-highlights dt {
-  color: rgba(80, 55, 69, 0.68);
+  color: #6b5160;
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -1620,7 +1550,7 @@ tr:last-child td {
 }
 
 .star-empty {
-  color: rgba(169, 120, 32, 0.28);
+  color: var(--gold);
 }
 
 .review-card p {
@@ -1661,11 +1591,13 @@ tr:last-child td {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
-  overflow: hidden;
 }
 
+/* No overflow clipping on .faq-item: it would hide the summary's focus ring. The radius makes
+   the ring follow the card's rounded corners. */
 .faq-item summary {
   min-height: 76px;
+  border-radius: calc(var(--radius) - 1px);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1858,8 +1790,31 @@ tr:last-child td {
 .lead-form input:focus,
 .lead-form select:focus,
 .lead-form textarea:focus {
-  outline: 3px solid rgba(192, 24, 102, 0.18);
+  outline: 3px solid var(--brand-strong);
+  outline-offset: 2px;
   border-color: var(--brand);
+}
+
+.form-hint {
+  margin: 0 0 14px;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.required-mark {
+  color: var(--brand-strong);
+}
+
+.lead-form [aria-invalid="true"] {
+  border-color: var(--brand-strong);
+  box-shadow: inset 0 0 0 1px var(--brand-strong);
+}
+
+.field-error {
+  margin: -8px 0 14px;
+  color: var(--brand-strong);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .form-note {
@@ -1942,9 +1897,17 @@ tr:last-child td {
   cursor: pointer;
 }
 
-.site-footer .legal-links button {
+.site-footer .legal-links button,
+.site-footer .legal-links a {
   min-height: 44px;
   padding: 4px 2px;
+}
+
+.legal-links a {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
 .footer-top {
@@ -1964,6 +1927,8 @@ tr:last-child td {
   align-items: center;
   gap: 18px;
   width: min(920px, calc(100vw - 36px));
+  max-height: calc(100svh - 36px);
+  overflow-y: auto;
   margin-inline: auto;
   padding: 18px;
   border: 1px solid rgba(195, 35, 113, 0.24);
@@ -2009,101 +1974,6 @@ tr:last-child td {
   color: #7f164a;
 }
 
-.accessibility-toggle {
-  position: fixed;
-  inset-block-end: 24px;
-  inset-inline-end: 22px;
-  z-index: 140;
-  width: 54px;
-  height: 54px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.52);
-  border-radius: 999px;
-  background: #c32371;
-  color: #fff;
-  box-shadow: 0 18px 42px rgba(84, 16, 49, 0.28);
-  cursor: pointer;
-  transition: transform 180ms ease;
-}
-
-.accessibility-toggle:hover,
-.accessibility-toggle:focus-visible {
-  transform: translateY(-2px);
-}
-
-.accessibility-panel {
-  position: fixed;
-  inset-block-end: 88px;
-  inset-inline-end: 22px;
-  z-index: 145;
-  width: min(320px, calc(100vw - 32px));
-  max-height: calc(100svh - 108px);
-  overflow-y: auto;
-  padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: var(--radius);
-  background: #c32371;
-  color: #fff;
-  box-shadow: 0 26px 68px rgba(84, 16, 49, 0.32);
-}
-
-.panel-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  margin-block-end: 12px;
-}
-
-.panel-head h2 {
-  margin: 0;
-  color: #fff;
-  font-size: 1.3rem;
-}
-
-.panel-head button {
-  border: 1px solid rgba(255, 255, 255, 0.36);
-  border-radius: var(--radius-sm);
-  background: rgba(255, 255, 255, 0.14);
-  color: #fff;
-  cursor: pointer;
-}
-
-.panel-head button {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  font-size: 20px;
-}
-
-.accessibility-panel > button:not(.plain-link) {
-  border: 1px solid rgba(255, 255, 255, 0.72);
-  border-radius: var(--radius-sm);
-  background: #fff;
-  color: #751440;
-  cursor: pointer;
-}
-
-.accessibility-panel > button {
-  width: 100%;
-  min-height: 44px;
-  margin-block-start: 8px;
-  font-weight: 900;
-}
-
-.accessibility-panel > button[aria-pressed="true"] {
-  border-color: #fff;
-  background: #2a0c1c;
-  color: #fff;
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28);
-}
-
-.accessibility-panel > .plain-link {
-  color: #fff;
-}
-
 .legal-dialog {
   width: min(760px, calc(100vw - 32px));
   max-height: 84svh;
@@ -2141,6 +2011,10 @@ tr:last-child td {
   max-height: 84svh;
   overflow: auto;
   padding: 34px 34px 36px;
+}
+
+.policy-content:focus-visible {
+  outline-offset: -4px;
 }
 
 .policy-content > .eyebrow {
@@ -2695,8 +2569,7 @@ tr:last-child td {
     width: auto;
     padding: 14px;
     gap: 12px;
-    max-height: none;
-    overflow: visible;
+    max-height: calc(100svh - 96px);
   }
 
   .cookie-banner h2 {
@@ -2704,12 +2577,8 @@ tr:last-child td {
   }
 
   .cookie-banner p {
-    display: -webkit-box;
-    overflow: hidden;
     font-size: 0.9rem;
     line-height: 1.45;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
   }
 
   .cookie-actions {
@@ -2726,18 +2595,6 @@ tr:last-child td {
   .cookie-actions .plain-link {
     grid-column: 1 / -1;
     justify-self: center;
-  }
-
-  .accessibility-toggle {
-    inset-block-end: 76px;
-    inset-inline-end: 14px;
-  }
-
-  .accessibility-panel {
-    inset-block-end: 138px;
-    inset-inline: 14px;
-    width: auto;
-    max-height: calc(100svh - 152px);
   }
 
   .policy-content {
@@ -2806,5 +2663,779 @@ tr:last-child td {
     opacity: 1 !important;
     translate: 0 0 !important;
     filter: none !important;
+  }
+}
+
+/* ==========================================================================
+   Accessibility statement page
+   ========================================================================== */
+
+.statement-header .main-nav {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+
+.statement-back {
+  justify-self: center;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--brand-strong);
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.statement-page {
+  padding: clamp(36px, 6vw, 72px) 20px var(--section-y);
+  background: linear-gradient(180deg, var(--surface-tint) 0%, var(--paper) 360px);
+}
+
+.statement {
+  width: min(100%, 860px);
+  margin-inline: auto;
+  padding: clamp(24px, 5vw, 48px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--a11y-cream);
+  box-shadow: var(--shadow-soft);
+}
+
+.statement h1 {
+  margin-block-end: 8px;
+  color: var(--a11y-bordeaux);
+  font-size: clamp(2.2rem, 5vw, 3.2rem);
+  line-height: 1.1;
+}
+
+.statement-updated {
+  margin-block-end: 8px;
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.statement section {
+  padding-block-start: 22px;
+}
+
+.statement h2 {
+  margin-block-end: 10px;
+  color: var(--a11y-bordeaux);
+  font-size: clamp(1.35rem, 3vw, 1.7rem);
+}
+
+.statement h3 {
+  margin: 18px 0 6px;
+  color: var(--ink);
+  font-size: 1.1rem;
+}
+
+.statement p,
+.statement ul {
+  margin: 0 0 12px;
+  color: var(--ink-soft);
+}
+
+.statement ul {
+  padding-inline-start: 22px;
+}
+
+.statement li {
+  margin-block-end: 6px;
+}
+
+.statement a {
+  color: var(--a11y-bordeaux);
+  font-weight: 900;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.site-footer .legal-links a[aria-current="page"] {
+  text-decoration-thickness: 3px;
+}
+
+@media (max-width: 720px) {
+  .statement-header .main-nav {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+  }
+
+  .statement-header .language-switcher {
+    grid-column: 3;
+    justify-self: end;
+  }
+
+  .statement-back {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 0.9rem;
+  }
+
+  .statement-page {
+    padding-inline: 12px;
+  }
+}
+
+/* ==========================================================================
+   Accessibility menu
+   ========================================================================== */
+
+.a11y-launcher {
+  position: fixed;
+  /* Sits above the cookie banner and the mobile bar, without leaving the viewport. */
+  inset-block-end: min(
+    max(24px, calc(var(--fixed-bottom-inset, 0px) + 12px)),
+    calc(100svh - 64px)
+  );
+  inset-inline-end: 22px;
+  z-index: 155;
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.52);
+  border-radius: 999px;
+  background: #c32371;
+  color: #fff;
+  box-shadow: 0 18px 42px rgba(84, 16, 49, 0.28);
+  cursor: pointer;
+  transition: transform 180ms ease;
+}
+
+.a11y-launcher:hover,
+.a11y-launcher:focus-visible {
+  transform: translateY(-2px);
+}
+
+.a11y-launcher:focus-visible {
+  outline-color: var(--a11y-bordeaux);
+}
+
+.a11y-launcher svg {
+  width: 30px;
+  height: 30px;
+  stroke-width: 2;
+}
+
+.a11y-panel {
+  position: fixed;
+  inset: auto;
+  inset-block-end: 92px;
+  inset-inline-end: 22px;
+  width: min(400px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(760px, calc(100svh - 112px));
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 22px;
+  background: var(--a11y-cream);
+  color: var(--ink);
+  box-shadow: 0 30px 80px rgba(42, 12, 28, 0.28);
+}
+
+.a11y-panel[open] {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Light so visitors can watch each adjustment apply to the page behind the menu. */
+.a11y-panel::backdrop {
+  background: rgba(42, 12, 28, 0.16);
+}
+
+.a11y-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 20px 14px;
+  border-block-end: 1px solid var(--line);
+  background: #fff;
+}
+
+.a11y-panel-header h2 {
+  margin: 0;
+  color: var(--a11y-bordeaux);
+  font-size: 1.3rem;
+  line-height: 1.25;
+}
+
+.a11y-panel-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.a11y-close {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.a11y-close:hover {
+  border-color: var(--a11y-bordeaux);
+  color: var(--a11y-bordeaux);
+}
+
+.a11y-panel-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 6px 20px 8px;
+}
+
+.a11y-group {
+  padding-block: 14px 6px;
+}
+
+.a11y-group + .a11y-group {
+  border-block-start: 1px solid var(--line);
+}
+
+.a11y-group h3 {
+  margin: 0 0 10px;
+  color: var(--a11y-bordeaux);
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+
+.a11y-group-hint {
+  margin: -4px 0 10px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
+.a11y-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.a11y-option {
+  position: relative;
+  min-height: 74px;
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 6px;
+  padding: 12px 12px 10px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.25;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+.a11y-option svg {
+  width: 24px;
+  height: 24px;
+  color: var(--a11y-bordeaux);
+}
+
+.a11y-option:hover {
+  border-color: var(--a11y-bordeaux);
+  background: var(--surface-tint);
+}
+
+.a11y-option[aria-pressed="true"] {
+  border-color: var(--a11y-bordeaux);
+  background: var(--a11y-bordeaux);
+  color: #fff;
+}
+
+.a11y-option[aria-pressed="true"] svg {
+  color: #fff;
+}
+
+/* The check mark shows the "on" state by shape, not only by color. */
+.a11y-option .a11y-check {
+  position: absolute;
+  inset-block-start: 8px;
+  inset-inline-end: 8px;
+  width: 20px;
+  height: 20px;
+  display: none;
+  stroke-width: 3;
+}
+
+.a11y-option[aria-pressed="true"] .a11y-check {
+  display: block;
+}
+
+.a11y-stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-block-end: 8px;
+  padding: 8px 8px 8px 12px;
+  border: 1px solid var(--line-strong);
+  border-radius: 14px;
+  background: #fff;
+}
+
+html[dir="rtl"] .a11y-stepper {
+  padding: 8px 12px 8px 8px;
+}
+
+.a11y-stepper-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.a11y-stepper-label svg {
+  width: 24px;
+  height: 24px;
+  color: var(--a11y-bordeaux);
+}
+
+.a11y-stepper-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.a11y-stepper-controls button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  background: var(--a11y-cream);
+  color: var(--a11y-bordeaux);
+  cursor: pointer;
+}
+
+.a11y-stepper-controls button:hover {
+  border-color: var(--a11y-bordeaux);
+}
+
+.a11y-stepper-controls button[aria-disabled="true"] {
+  border-style: dashed;
+  color: var(--muted);
+  cursor: not-allowed;
+}
+
+.a11y-stepper-controls svg {
+  width: 22px;
+  height: 22px;
+  stroke-width: 2.4;
+}
+
+.a11y-stepper output {
+  min-width: 4.2em;
+  font-weight: 900;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.a11y-panel-footer {
+  display: grid;
+  gap: 6px;
+  padding: 14px 20px 16px;
+  border-block-start: 1px solid var(--line);
+  background: #fff;
+}
+
+.a11y-reset {
+  min-height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid var(--a11y-bordeaux);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--a11y-bordeaux);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.a11y-reset:hover {
+  background: var(--surface-tint);
+}
+
+.a11y-reset-icon {
+  display: grid;
+}
+
+/* Both icons share one cell, so the confirmation swap never moves the label. */
+.a11y-reset-icon svg {
+  grid-area: 1 / 1;
+  width: 20px;
+  height: 20px;
+  transition:
+    opacity 180ms ease,
+    transform 220ms ease;
+}
+
+.a11y-reset-done,
+.a11y-reset.is-confirmed .a11y-reset-idle {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.a11y-reset.is-confirmed .a11y-reset-done {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.a11y-statement-link {
+  justify-self: center;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  color: var(--a11y-bordeaux);
+  font-weight: 800;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+@media (max-width: 720px) {
+  .a11y-launcher {
+    inset-block-end: min(
+      max(76px, calc(var(--fixed-bottom-inset, 0px) + 12px)),
+      calc(100svh - 62px)
+    );
+    inset-inline-end: 14px;
+    width: 52px;
+    height: 52px;
+  }
+
+  /* A bottom sheet on phones; it is modal, so it may cover the mobile bar. */
+  .a11y-panel {
+    inset-block-end: 8px;
+    inset-inline: 8px;
+    width: auto;
+    max-height: calc(100svh - 16px);
+    border-radius: 20px;
+  }
+
+  .a11y-panel-header,
+  .a11y-panel-body,
+  .a11y-panel-footer {
+    padding-inline: 16px;
+  }
+}
+
+/* ==========================================================================
+   Accessibility adjustments
+   Set on <html> by accessibility.js: data-a11y-text-size and a11y-* classes.
+   ========================================================================== */
+
+:root {
+  --a11y-bordeaux: #7f164a;
+  --a11y-cream: #fffafd;
+  --a11y-mark-line: #7f164a;
+  --a11y-mark-fill: #fff0f7;
+  --a11y-mark-text: #111019;
+  --a11y-region-line: #7f164a;
+  --a11y-region-halo: #fff;
+  --a11y-focus-ring: #ffbf47;
+  --a11y-focus-halo: #111019;
+}
+
+/* Text size: scales the root so every rem-based size follows. */
+html[data-a11y-text-size="-1"] {
+  font-size: 90%;
+}
+
+html[data-a11y-text-size="1"] {
+  font-size: 115%;
+}
+
+html[data-a11y-text-size="2"] {
+  font-size: 130%;
+}
+
+html[data-a11y-text-size="3"] {
+  font-size: 150%;
+}
+
+/* Readable font: wide system sans-serif with Hebrew glyphs, normal weights, no italics. */
+html.a11y-readable-font body,
+html.a11y-readable-font body *:not(svg, svg *) {
+  font-family: Tahoma, "Segoe UI", system-ui, Arial, sans-serif !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+}
+
+html.a11y-readable-font body :is(h1, h2, h3, h4, strong, b, th, dt, summary, label, button, .button) {
+  font-weight: 700 !important;
+}
+
+html.a11y-line-height body *:not(svg, svg *) {
+  line-height: 2 !important;
+}
+
+/* Letter and word spacing values from WCAG 1.4.12. */
+html.a11y-letter-spacing body *:not(svg, svg *) {
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+
+html.a11y-highlight-headings body :is(h1, h2, h3, h4, h5, h6) {
+  outline: 3px solid var(--a11y-mark-line) !important;
+  outline-offset: 4px;
+  border-radius: 6px;
+  background-color: var(--a11y-mark-fill) !important;
+  color: var(--a11y-mark-text) !important;
+  box-decoration-break: clone;
+}
+
+/* Focused links keep the regular focus ring, so focus stays distinguishable. */
+html.a11y-highlight-links body :is(a[href], .plain-link, .legal-links button) {
+  text-decoration-line: underline !important;
+  text-decoration-thickness: 2px !important;
+  text-underline-offset: 4px !important;
+}
+
+html.a11y-highlight-links body :is(a[href], .plain-link, .legal-links button):not(:focus-visible) {
+  outline: 2px dashed currentColor !important;
+  outline-offset: 3px;
+}
+
+html.a11y-stop-animations {
+  scroll-behavior: auto !important;
+}
+
+html.a11y-stop-animations *,
+html.a11y-stop-animations *::before,
+html.a11y-stop-animations *::after {
+  animation: none !important;
+  scroll-behavior: auto !important;
+  transition: none !important;
+}
+
+html.a11y-stop-animations .scroll-reveal,
+html.a11y-stop-animations .scroll-reveal-item {
+  opacity: 1 !important;
+  translate: 0 0 !important;
+  filter: none !important;
+}
+
+/* Large cursor (48px SVG images; browsers ignore cursor images above 128px). */
+html.a11y-big-cursor,
+html.a11y-big-cursor * {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M8 4v34l9-8 6 14 6-3-6-13h12z' fill='black' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      8 4,
+    auto !important;
+}
+
+html.a11y-big-cursor :is(a[href], button, summary, select, label, [role="button"]),
+html.a11y-big-cursor :is(a[href], button, summary, label, [role="button"]) * {
+  cursor:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cpath d='M18 6c-1.7 0-3 1.3-3 3v17l-3.2-3.2c-1.2-1.2-3.1-1.2-4.2 0s-1.2 3.1 0 4.2L17 36.4c2.3 2.5 5.5 3.6 8.8 3.6H28c6.1 0 11-4.9 11-11V20c0-1.7-1.3-3-3-3s-3 1.3-3 3v-2c0-1.7-1.3-3-3-3s-3 1.3-3 3v-1c0-1.7-1.3-3-3-3s-3 1.3-3 3V9c0-1.7-1.3-3-3-3z' fill='black' stroke='white' stroke-width='2.5' stroke-linejoin='round'/%3E%3C/svg%3E")
+      18 6,
+    pointer !important;
+}
+
+html.a11y-big-cursor :is(input:not([type="checkbox"], [type="radio"]), textarea) {
+  cursor: text !important;
+}
+
+/* The white halo keeps the dashed region line visible on both light and dark sections. */
+html.a11y-highlight-regions body :is(header, nav, main, footer, aside, main > section, form, [role="region"]):not(:focus-visible) {
+  outline: 3px dashed var(--a11y-region-line) !important;
+  outline-offset: -3px;
+  box-shadow: inset 0 0 0 3px var(--a11y-region-halo) !important;
+}
+
+/* ---------- Contrast modes ---------- */
+
+html.a11y-contrast-dark {
+  --hc-bg: #000;
+  --hc-text: #fff;
+  --hc-accent: #f0c36a;
+  --hc-on-accent: #000;
+  --hc-line: #fff;
+  --a11y-mark-line: #f0c36a;
+  --a11y-mark-fill: #000;
+  --a11y-mark-text: #fff;
+  --a11y-region-line: #f0c36a;
+  --a11y-region-halo: #000;
+  color-scheme: dark;
+}
+
+html.a11y-contrast-light {
+  --hc-bg: #fff;
+  --hc-text: #111019;
+  --hc-accent: #7f164a;
+  --hc-on-accent: #fff;
+  --hc-line: #111019;
+  --a11y-mark-line: #7f164a;
+  --a11y-mark-fill: #fff;
+  --a11y-mark-text: #111019;
+  --a11y-region-line: #7f164a;
+  --a11y-region-halo: #fff;
+  color-scheme: light;
+}
+
+html.a11y-contrast,
+html.a11y-contrast body {
+  background: var(--hc-bg) !important;
+  color: var(--hc-text) !important;
+}
+
+/* Every surface, gradient, overlay, border and shadow takes the mode's colors, including
+   hard-coded values and pseudo-elements. Images, videos and SVG drawings are excluded. */
+html.a11y-contrast body *:not(img, video, svg, svg *),
+html.a11y-contrast body *::before,
+html.a11y-contrast body *::after {
+  background-color: transparent !important;
+  background-image: none !important;
+  color: inherit !important;
+  border-color: var(--hc-line) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+html.a11y-contrast body ::placeholder {
+  color: var(--hc-text) !important;
+  opacity: 0.8;
+}
+
+/* Layers that sit over other content need an opaque background. */
+html.a11y-contrast body :is(.site-header, .nav-links, .language-switcher, .menu-toggle, .skip-link, .cookie-banner, .mobile-bar, .legal-dialog, .video-lightbox, .video-lightbox-close, .dialog-close, .review-control, .reel-card span, .a11y-launcher, .a11y-panel),
+html.a11y-contrast body .reel-card::after {
+  background-color: var(--hc-bg) !important;
+}
+
+html.a11y-contrast body a[href] {
+  color: var(--hc-accent) !important;
+}
+
+html.a11y-contrast body :is(button:not(.plain-link, .language-option, .legal-links button), .button, .nav-cta, input, select, textarea, .reel-card, .language-switcher, .review-avatar, .policy-note, .reel-card span, .reel-card::after) {
+  border-width: 2px !important;
+  border-style: solid !important;
+}
+
+html.a11y-contrast body .reel-card span {
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+html.a11y-contrast body .reel-card::after {
+  border: 2px solid var(--hc-line);
+}
+
+html.a11y-contrast body :is(.primary, .nav-cta, .tab.active, .tab[aria-selected="true"], .language-option[aria-pressed="true"], .a11y-option[aria-pressed="true"]) {
+  background-color: var(--hc-accent) !important;
+  color: var(--hc-on-accent) !important;
+  border-color: var(--hc-accent) !important;
+}
+
+html.a11y-contrast body :is(a[href], button):hover {
+  text-decoration-line: underline !important;
+}
+
+html.a11y-contrast body :focus-visible {
+  outline: 3px solid var(--hc-accent) !important;
+  outline-offset: 3px !important;
+}
+
+/* Desktop navigation links are plain text links, not boxes. */
+@media (min-width: 1041px) {
+  html.a11y-contrast body .nav-links a {
+    border-color: transparent !important;
+  }
+}
+
+/* Drawn with background-color in the regular design. */
+html.a11y-contrast body .menu-toggle-lines span,
+html.a11y-contrast body .nav-links a::after {
+  background-color: currentColor !important;
+}
+
+html.a11y-contrast body [aria-invalid="true"] {
+  border: 3px dashed var(--hc-accent) !important;
+}
+
+html.a11y-contrast body :is(.field-error, .required-mark, .a11y-group h3, .a11y-panel-header h2) {
+  color: var(--hc-accent) !important;
+}
+
+/* Icons follow the text color. The TikTok mark is drawn in black, which would vanish on black. */
+html.a11y-contrast .sprite :is(path, rect, circle, g) {
+  stroke: currentColor !important;
+}
+
+html.a11y-contrast #icon-facebook path {
+  fill: currentColor !important;
+}
+
+/* Logos keep their original colors: a white plate in dark mode, the original file in light mode. */
+html.a11y-contrast-dark body .brand {
+  padding: 4px 8px;
+  border-radius: 12px;
+  background-color: #fff !important;
+}
+
+html.a11y-contrast-light .site-footer img {
+  filter: none;
+}
+
+/* ---------- Color filters ----------
+   Applied to page regions rather than <html>/<body>: a filter on an ancestor would re-anchor
+   the fixed accessibility button, cookie banner and mobile bar. */
+
+html.a11y-grayscale :is(.site-header, main, .site-footer, .mobile-bar, .cookie-banner, .legal-dialog, .video-lightbox) {
+  filter: grayscale(1) !important;
+}
+
+html.a11y-saturation-low :is(.site-header, main, .site-footer, .mobile-bar, .cookie-banner, .legal-dialog, .video-lightbox) {
+  filter: saturate(0.4) !important;
+}
+
+/* High saturation would push the pink brand colors below 4.5:1 behind white text, so it
+   applies to photos, videos and avatars only and leaves text colors unchanged. */
+html.a11y-saturation-high :is(main img, main video, .video-lightbox video, .review-avatar) {
+  filter: saturate(1.7) !important;
+}
+
+/* Last, so it wins over the focus styles of every other mode. */
+html.a11y-strong-focus body :focus-visible {
+  outline: 4px solid var(--a11y-focus-ring) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 9px var(--a11y-focus-halo) !important;
+}
+
+/* Selected states rely on background colors that forced-colors mode removes. */
+@media (forced-colors: active) {
+  .tab[aria-selected="true"],
+  .language-option[aria-pressed="true"],
+  .a11y-option[aria-pressed="true"] {
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
   }
 }

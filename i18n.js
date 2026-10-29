@@ -140,8 +140,25 @@
         textSources.set(node, normalize(node.nodeValue));
       }
 
-      replaceTextNode(node, translateSource(textSources.get(node)));
+      const source = textSources.get(node);
+      const translated = translateSource(source);
+
+      replaceTextNode(node, translated);
+      syncSourceLanguage(node.parentElement, source, translated);
     });
+  }
+
+  // Foreign words marked with data-source-lang keep their lang only while shown untranslated.
+  function syncSourceLanguage(element, source, translated) {
+    const sourceLanguage = element?.dataset.sourceLang;
+
+    if (!sourceLanguage) return;
+
+    if (translated === source) {
+      element.lang = sourceLanguage;
+    } else {
+      element.removeAttribute("lang");
+    }
   }
 
   function getAttributeStore(element) {
@@ -182,8 +199,9 @@
     }
   }
 
+  // Pages other than the home page name their own SEO block, e.g. data-seo-key="accessibilitySeo".
   function applySeo(locale, language) {
-    const seo = locale.seo || {};
+    const seo = locale[document.documentElement.dataset.seoKey || "seo"] || {};
     const languageInfo = languages[language];
 
     if (seo.title) {
