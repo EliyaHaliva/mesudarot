@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="he" dir="rtl" data-seo-key="accessibilitySeo">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>הצהרת נגישות | מסודרות</title>
+    <meta
+      name="description"
+      content="הצהרת הנגישות של מסודרות Beauty & Cosmetics: התאמות הנגישות באתר, תפריט הנגישות, הסדרי הנגישות בבית העסק ודרכי פנייה."
+    />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#c01866" />
+    <link rel="icon" type="image/png" href="assets/logo.png" />
+    <link rel="canonical" href="https://www.mesudarot-il.com/accessibility.html" />
+    <link rel="stylesheet" href="styles.css?v=20261029-a11y-reset" />
+    <script src="accessibility.js?v=20261029-a11y-reset"></script>
+    <script defer src="i18n.js?v=20261029-a11y-menu"></script>
+  </head>
+  <body>
+    <svg class="sprite" aria-hidden="true" focusable="false">
+      <symbol id="icon-accessibility" viewBox="0 0 24 24">
+        <path d="M12 4.5a1.8 1.8 0 1 0 0-3.6 1.8 1.8 0 0 0 0 3.6Z" />
+        <path d="M4 7h16" />
+        <path d="M12 7v5" />
+        <path d="M8 21l4-9 4 9" />
+        <path d="M8.5 11.5h7" />
+      </symbol>
+      <symbol id="icon-a11y-text-size" viewBox="0 0 24 24">
+        <path d="M3 19 8.5 5h1L15 19M5.2 14h7.6" />
+        <path d="M16 19l3.5-8 3.5 8M17 16.5h5" />
+      </symbol>
+      <symbol id="icon-a11y-font" viewBox="0 0 24 24">
+        <path d="M4 7V5h16v2M12 5v14M9 19h6" />
+      </symbol>
+      <symbol id="icon-a11y-line-height" viewBox="0 0 24 24">
+        <path d="M11 6h10M11 12h10M11 18h10" />
+        <path d="M5 4v16M3 6l2-2 2 2M3 18l2 2 2-2" />
+      </symbol>
+      <symbol id="icon-a11y-letter-spacing" viewBox="0 0 24 24">
+        <path d="M5 13l3-8 3 8M6 11h4M14 5v8h3.5a2 2 0 0 0 0-4H14M14 9h3a2 2 0 0 0 0-4h-3" />
+        <path d="M3 19h18M6 17l-3 2 3 2M18 17l3 2-3 2" />
+      </symbol>
+      <symbol id="icon-a11y-heading" viewBox="0 0 24 24">
+        <path d="M6 5v14M16 5v14M6 12h10" />
+        <rect x="2.5" y="2.5" width="19" height="19" rx="3" />
+      </symbol>
+      <symbol id="icon-a11y-link" viewBox="0 0 24 24">
+        <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1" />
+        <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1" />
+      </symbol>
+      <symbol id="icon-a11y-pause" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M10 9v6M14 9v6" />
+      </symbol>
+      <symbol id="icon-a11y-cursor" viewBox="0 0 24 24">
+        <path d="M5 3v15l4.2-3.8L12 21l3-1.4-2.8-6.3H18Z" />
+      </symbol>
+      <symbol id="icon-a11y-contrast-dark" viewBox="0 0 24 24">
+        <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+      </symbol>
+      <symbol id="icon-a11y-contrast-light" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </symbol>
+      <symbol id="icon-a11y-grayscale" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" />
+      </symbol>
+      <symbol id="icon-a11y-saturation-high" viewBox="0 0 24 24">
+        <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z" fill="currentColor" />
+      </symbol>
+      <symbol id="icon-a11y-saturation-low" viewBox="0 0 24 24">
+        <path d="M12 3s6 6.4 6 11a6 6 0 0 1-12 0c0-4.6 6-11 6-11Z" />
+        <path d="M9 15a3 3 0 0 0 3 3" />
+      </symbol>
+      <symbol id="icon-a11y-focus" viewBox="0 0 24 24">
+        <path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3" />
+        <rect x="8" y="9" width="8" height="6" rx="1.5" />
+      </symbol>
+      <symbol id="icon-a11y-regions" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 2.5" />
+        <path d="M3 9h18M9 9v12" />
+      </symbol>
+      <symbol id="icon-a11y-reset" viewBox="0 0 24 24">
+        <path d="M4 12a8 8 0 1 0 2.4-5.7L4 8.5" />
+        <path d="M4 3.5v5h5" />
+      </symbol>
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <path d="m5 12.5 4.5 4.5L19 7.5" />
+      </symbol>
+      <symbol id="icon-close" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </symbol>
+      <symbol id="icon-minus" viewBox="0 0 24 24">
+        <path d="M5 12h14" />
+      </symbol>
+      <symbol id="icon-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+    </svg>
+
+    <a class="skip-link" href="#main">דלגי לתוכן</a>
+
+    <header class="site-header statement-header">
+      <nav class="main-nav" aria-label="ניווט ראשי">
+        <a class="brand" href="index.html" aria-label="מסודרות דף הבית">
+          <img
+            src="assets/logo.png"
+            width="400"
+            height="215"
+            alt="מסודרות Beauty & Cosmetics"
+          />
+        </a>
+        <a class="statement-back" href="index.html">חזרה לדף הבית</a>
+        <div class="language-switcher" role="group" aria-label="בחירת שפה">
+          <button
+            class="language-option active"
+            type="button"
+            data-language-option="he"
+            aria-pressed="true"
+            lang="he"
+            aria-label="עברית"
+          >
+            HE
+          </button>
+          <button
+            class="language-option"
+            type="button"
+            data-language-option="en"
+            aria-pressed="false"
+            lang="en"
+            aria-label="English"
+          >
+            EN
+          </button>
+          <button
+            class="language-option"
+            type="button"
+            data-language-option="fr"
+            aria-pressed="false"
+            lang="fr"
+            aria-label="Français"
+          >
+            FR
+          </button>
+          <button
+            class="language-option"
+            type="button"
+            data-language-option="ru"
+            aria-pressed="false"
+            lang="ru"
+            aria-label="Русский"
+          >
+            RU
+          </button>
+        </div>
+      </nav>
+    </header>
+
+    <main id="main" class="statement-page">
+      <article class="statement">
+        <p class="eyebrow">נגישות</p>
+        <h1>הצהרת נגישות</h1>
+        <p class="statement-updated">תאריך עדכון ההצהרה: 29 באוקטובר 2026.</p>
+
+        <section aria-labelledby="statement-commitment">
+          <h2 id="statement-commitment">המחויבות שלנו</h2>
+          <p>
+            מסודרות רואה חשיבות רבה במתן שירות שוויוני, מכבד ונגיש לכלל הלקוחות,
+            לרבות אנשים עם מוגבלות. אנו פועלים להנגשת האתר והשירות בהתאם לחוק
+            שוויון זכויות לאנשים עם מוגבלות, התשנ"ח-1998, ולתקנות שוויון זכויות
+            לאנשים עם מוגבלות (התאמות נגישות לשירות), התשע"ג-2013.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-level">
+          <h2 id="statement-level">רמת הנגישות באתר</h2>
+          <p>
+            האתר הותאם במטרה לעמוד בדרישות תקן ישראלי ת"י 5568 לנגישות תכנים
+            באינטרנט ברמה AA, המבוסס על הנחיות WCAG 2.0.
+          </p>
+          <p>
+            בדיקת הנגישות האחרונה של האתר בוצעה ב-29 באוקטובר 2026 באמצעות כלי
+            בדיקה אוטומטיים ובדיקות ידניות בדפדפן.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-adjustments">
+          <h2 id="statement-adjustments">התאמות הנגישות שבוצעו באתר</h2>
+          <ul>
+            <li>
+              ניווט מלא באמצעות מקלדת (Tab, Shift+Tab, Enter, מקשי החיצים ו-Esc),
+              עם סימון ברור של הרכיב שבמיקוד.
+            </li>
+            <li>קישור "דלגי לתוכן" בתחילת כל עמוד.</li>
+            <li>
+              מבנה כותרות היררכי, אזורי ניווט מסומנים ותיוג רכיבים עבור קוראי מסך.
+            </li>
+            <li>
+              טקסט חלופי לתמונות בעלות משמעות, והסתרת תמונות עיצוביות מקוראי מסך.
+            </li>
+            <li>
+              תווית ברורה לכל שדה בטופס יצירת הקשר, סימון שדות חובה והודעות שגיאה
+              כתובות.
+            </li>
+            <li>תיאור טקסטואלי לכל סרטון בגלריית הסטודיו, הזמין לקוראי מסך.</li>
+            <li>
+              ניגודיות צבעים בעיצוב הרגיל של האתר שנבדקה מול דרישות רמה AA.
+            </li>
+            <li>תמיכה בהגדלת התצוגה בדפדפן ובגלישה מטלפון נייד.</li>
+            <li>כיבוד הגדרת מערכת ההפעלה להפחתת תנועה.</li>
+            <li>
+              תמיכה בעברית, אנגלית, צרפתית ורוסית, עם הגדרת שפה וכיוון טקסט
+              מתאימים.
+            </li>
+          </ul>
+        </section>
+
+        <section aria-labelledby="statement-menu">
+          <h2 id="statement-menu">תפריט הנגישות</h2>
+          <p>
+            כפתור הנגישות הקבוע בפינת המסך פותח את תפריט ההתאמות. אפשר להפעיל אותו
+            בעכבר, במגע או במקלדת, ולסגור אותו בכפתור הסגירה או במקש Esc. כל
+            התאמה חלה מיד, ואפשר להפעיל ולבטל כל אחת בנפרד.
+          </p>
+          <h3>התאמות תוכן</h3>
+          <ul>
+            <li>גודל טקסט: הקטנה והגדלה בדרגות, מ-90% ועד 150%.</li>
+            <li>גופן קריא: גופן פשוט ורחב במשקל רגיל.</li>
+            <li>ריווח שורות: הגדלת המרווח בין השורות.</li>
+            <li>ריווח אותיות: הגדלת המרווח בין האותיות ובין המילים.</li>
+            <li>הדגשת כותרות: מסגרת ורקע סביב כל כותרת.</li>
+            <li>הדגשת קישורים: קו תחתון ומסגרת מקווקוות סביב כל קישור.</li>
+            <li>עצירת אנימציות: ביטול אנימציות, מעברים וגלילה חלקה.</li>
+            <li>סמן עכבר גדול: זמין במחשב עם עכבר או משטח מגע.</li>
+          </ul>
+          <h3>צבעים וניגודיות</h3>
+          <p>אפשר לבחור מצב צבע אחד בכל פעם.</p>
+          <ul>
+            <li>
+              ניגודיות כהה: רקע שחור, טקסט לבן וקישורים בצבע זהב, בכל רכיבי האתר.
+            </li>
+            <li>ניגודיות בהירה: רקע לבן, טקסט כהה וקישורים בצבע בורדו.</li>
+            <li>גווני אפור: הצגת האתר ללא צבע.</li>
+            <li>
+              רוויה גבוהה: הגברת הצבעים בתמונות ובסרטונים בלבד, כדי לשמור על
+              ניגודיות הטקסט.
+            </li>
+            <li>רוויה נמוכה: ריכוך הצבעים בכל האתר.</li>
+          </ul>
+          <h3>ניווט</h3>
+          <ul>
+            <li>הדגשת מיקוד: מסגרת צהובה עבה עם הילה כהה סביב הרכיב שבמיקוד.</li>
+            <li>הדגשת אזורים: מסגרת מקווקוות סביב אזורי העמוד.</li>
+          </ul>
+          <p>
+            הכפתור "איפוס כל ההתאמות" מחזיר את האתר לתצוגה הרגילה. ההתאמות נשמרות
+            בדפדפן שבו נבחרו, ללא מידע אישי, כדי שלא תצטרכו לבחור אותן מחדש בכל
+            ביקור. התפריט משלים את הגדרות הדפדפן ומערכת ההפעלה ואת הטכנולוגיות
+            המסייעות, ואינו מחליף אותם.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-browsers">
+          <h2 id="statement-browsers">דפדפנים וטכנולוגיות מסייעות</h2>
+          <p>
+            האתר נבדק בדפדפן Chrome במחשב ובתצוגת טלפון נייד, ותוכנן לפעול גם
+            בגרסאות העדכניות של Safari, Edge ו-Firefox.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-premises">
+          <h2 id="statement-premises">הסדרי נגישות בבית העסק</h2>
+          <!-- Physical arrangements as supplied by the business; written confirmation is still pending. -->
+          <p>בית העסק ממוקם בדיזנגוף סנטר, תל אביב.</p>
+          <ul>
+            <li>
+              <strong>כניסה לעסק:</strong> הכניסה לבית העסק היא ללא מדרגה.
+            </li>
+            <li>
+              <strong>מעברים בתוך העסק:</strong> קיימים מעברים המאפשרים מעבר בכיסא
+              גלגלים.
+            </li>
+            <li>
+              <strong>הגעה למתחם:</strong> בדיזנגוף סנטר קיימות כניסות נגישות,
+              מעליות וחניות נכים.
+            </li>
+            <li>
+              <strong>שירותים נגישים:</strong> במתחם דיזנגוף סנטר קיימים שירותים
+              נגישים. מומלץ לבדוק את מיקומם ביחס לבית העסק.
+            </li>
+          </ul>
+          <p>
+            הכניסה עם כלב נחייה או כלב שירות מותרת. מומלץ ליצור קשר לפני ההגעה כדי
+            שנוכל להיערך מראש להתאמות הנדרשות, כגון סיוע בהגעה לעמדת הטיפול, תיאום
+            מועד נוח או מסירת מידע בעל פה.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-alternatives">
+          <h2 id="statement-alternatives">שירות בערוצים חלופיים</h2>
+          <p>
+            אם קשה לכם להשתמש באתר או במערכת הזמנת התורים, אפשר לקבוע תור, לקבל
+            את המחירון ולברר כל פרט בטלפון, בוואטסאפ או במייל, והצוות ישמח לסייע.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-limitations">
+          <h2 id="statement-limitations">מגבלות נגישות ידועות</h2>
+          <ul>
+            <li>
+              מערכת הזמנת התורים EasyBizy, WhatsApp, Waze והרשתות החברתיות הם
+              שירותים חיצוניים שאינם בשליטתנו, ונגישותם באחריות מפעיליהם. בכל קושי
+              אפשר לקבוע תור ישירות בטלפון או בוואטסאפ.
+            </li>
+            <li>
+              סרטוני הסטודיו הם קטעי וידאו קצרים להמחשה ויזואלית ואינם כוללים
+              כתוביות או תיאור קולי. לכל סרטון יש תיאור טקסטואלי קצר עבור קוראי
+              מסך.
+            </li>
+            <li>
+              האתר טרם נבדק עם קוראי מסך ובמכשירי טלפון נייד אמיתיים. אם נתקלתם
+              בקושי, נשמח לקבל דיווח.
+            </li>
+            <li>
+              התאמות תפריט הנגישות חלות על אתר זה בלבד, ולא על שירותים חיצוניים
+              שאליהם הוא מקשר.
+            </li>
+            <li>
+              במצבי הניגודיות התמונות והלוגו נשארים בצבעיהם המקוריים, וסמלי
+              הרשתות החברתיות מוצגים בצבע אחיד.
+            </li>
+          </ul>
+          <p>
+            אנו ממשיכים לבדוק ולשפר את נגישות האתר. אם מצאתם רכיב שאינו נגיש,
+            נשמח לדעת ונפעל לתקן אותו בהקדם.
+          </p>
+        </section>
+
+        <section aria-labelledby="statement-contact">
+          <h2 id="statement-contact">פניות בנושא נגישות</h2>
+          <!-- An accessibility coordinator (name and contact details) must be listed here if the business employs 25 or more people. -->
+          <p>נתקלתם בקושי או שאתם זקוקים להתאמה? אפשר לפנות אלינו:</p>
+          <ul>
+            <li>טלפון: <a href="tel:036209661">03-620-9661</a></li>
+            <li>
+              וואטסאפ:
+              <a
+                href="https://api.whatsapp.com/send?phone=972526086083"
+                target="_blank"
+                rel="noopener"
+                >052-608-6083</a
+              >
+            </li>
+            <li>
+              מייל:
+              <a href="mailto:pinimesudarot@gmail.com">pinimesudarot@gmail.com</a>
+            </li>
+            <li>כתובת: דיזנגוף 50, דיזנגוף סנטר, תל אביב</li>
+          </ul>
+          <p>
+            כדי שנוכל לטפל בפנייה ביעילות, מומלץ לצרף תיאור של הבעיה, את שם הרכיב
+            או העמוד, וכן את סוג המכשיר, הדפדפן והטכנולוגיה המסייעת שבהם השתמשתם.
+          </p>
+          <p>
+            במקרה של סתירה בין הנוסח העברי של הצהרה זו לבין תרגומה, הנוסח העברי
+            הוא הקובע.
+          </p>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <img
+          src="assets/logo.png"
+          width="400"
+          height="215"
+          alt="מסודרות"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="legal-links" role="group" aria-label="מידע משפטי ונגישות">
+          <a href="index.html">חזרה לדף הבית</a>
+          <a href="accessibility.html" aria-current="page">הצהרת נגישות</a>
+        </div>
+        <p class="footer-copy">כל הזכויות שמורות למסודרות © 2026</p>
+      </div>
+    </footer>
+
+    <button
+      class="a11y-launcher"
+      type="button"
+      data-a11y-open
+      aria-haspopup="dialog"
+      aria-expanded="false"
+      aria-controls="a11y-panel"
+    >
+      <svg aria-hidden="true"><use href="#icon-accessibility"></use></svg>
+      <span class="sr-only">תפריט נגישות</span>
+    </button>
+
+    <dialog class="a11y-panel" id="a11y-panel" aria-labelledby="a11y-panel-title">
+      <div class="a11y-panel-header">
+        <div>
+          <h2 id="a11y-panel-title">התאמות נגישות</h2>
+          <p>השינויים חלים מיד ונשמרים בדפדפן זה בלבד.</p>
+        </div>
+        <button
+          class="a11y-close"
+          type="button"
+          data-a11y-close
+          aria-label="סגירת תפריט הנגישות"
+        >
+          <svg aria-hidden="true"><use href="#icon-close"></use></svg>
+        </button>
+      </div>
+
+      <div class="a11y-panel-body">
+        <section class="a11y-group" aria-labelledby="a11y-group-content">
+          <h3 id="a11y-group-content">התאמות תוכן</h3>
+          <div
+            class="a11y-stepper"
+            role="group"
+            aria-labelledby="a11y-text-size-label"
+          >
+            <span class="a11y-stepper-label" id="a11y-text-size-label">
+              <svg aria-hidden="true"><use href="#icon-a11y-text-size"></use></svg>
+              גודל טקסט
+            </span>
+            <span class="a11y-stepper-controls">
+              <button
+                type="button"
+                data-a11y-text-step="-1"
+                aria-label="הקטנת טקסט"
+              >
+                <svg aria-hidden="true"><use href="#icon-minus"></use></svg>
+              </button>
+              <output data-a11y-text-size-value aria-live="polite">100%</output>
+              <button
+                type="button"
+                data-a11y-text-step="1"
+                aria-label="הגדלת טקסט"
+              >
+                <svg aria-hidden="true"><use href="#icon-plus"></use></svg>
+              </button>
+            </span>
+          </div>
+          <div class="a11y-grid">
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="readableFont"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-font"></use></svg>
+              <span>גופן קריא</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="lineHeight"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-line-height"></use></svg>
+              <span>ריווח שורות</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="letterSpacing"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-letter-spacing"></use></svg>
+              <span>ריווח אותיות</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="highlightHeadings"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-heading"></use></svg>
+              <span>הדגשת כותרות</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="highlightLinks"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-link"></use></svg>
+              <span>הדגשת קישורים</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="stopAnimations"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-pause"></use></svg>
+              <span>עצירת אנימציות</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="bigCursor"
+              data-a11y-requires-fine-pointer
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-cursor"></use></svg>
+              <span>סמן עכבר גדול</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="a11y-group" aria-labelledby="a11y-group-color">
+          <h3 id="a11y-group-color">צבעים וניגודיות</h3>
+          <p class="a11y-group-hint">אפשר לבחור מצב צבע אחד בכל פעם.</p>
+          <div class="a11y-grid">
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-color="contrast-dark"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-contrast-dark"></use></svg>
+              <span>ניגודיות כהה</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-color="contrast-light"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-contrast-light"></use></svg>
+              <span>ניגודיות בהירה</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-color="grayscale"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-grayscale"></use></svg>
+              <span>גווני אפור</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-color="saturation-high"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-saturation-high"></use></svg>
+              <span>רוויה גבוהה</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-color="saturation-low"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-saturation-low"></use></svg>
+              <span>רוויה נמוכה</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="a11y-group" aria-labelledby="a11y-group-navigation">
+          <h3 id="a11y-group-navigation">ניווט</h3>
+          <div class="a11y-grid">
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="strongFocus"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-focus"></use></svg>
+              <span>הדגשת מיקוד</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+            <button
+              class="a11y-option"
+              type="button"
+              data-a11y-setting="highlightRegions"
+              aria-pressed="false"
+            >
+              <svg aria-hidden="true"><use href="#icon-a11y-regions"></use></svg>
+              <span>הדגשת אזורים</span>
+              <svg class="a11y-check" aria-hidden="true"><use href="#icon-check"></use></svg>
+            </button>
+          </div>
+        </section>
+      </div>
+
+      <div class="a11y-panel-footer">
+        <button class="a11y-reset" type="button" data-a11y-reset>
+          <span class="a11y-reset-icon" aria-hidden="true">
+            <svg class="a11y-reset-idle"><use href="#icon-a11y-reset"></use></svg>
+            <svg class="a11y-reset-done"><use href="#icon-check"></use></svg>
+          </span>
+          איפוס כל ההתאמות
+        </button>
+        <p class="sr-only" role="status" data-a11y-status></p>
+        <a class="a11y-statement-link" href="accessibility.html">הצהרת נגישות</a>
+      </div>
+    </dialog>
+  </body>
+</html>
