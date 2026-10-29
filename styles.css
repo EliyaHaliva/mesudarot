@@ -1591,11 +1591,13 @@ tr:last-child td {
   border-radius: var(--radius);
   background: var(--surface);
   box-shadow: var(--shadow-soft);
-  overflow: hidden;
 }
 
+/* No overflow clipping on .faq-item: it would hide the summary's focus ring. The radius makes
+   the ring follow the card's rounded corners. */
 .faq-item summary {
   min-height: 76px;
+  border-radius: calc(var(--radius) - 1px);
   display: flex;
   align-items: center;
   justify-content: space-between;
