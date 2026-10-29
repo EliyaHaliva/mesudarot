@@ -23,15 +23,22 @@
     "large-text": "a11y-large-text",
     "high-contrast": "a11y-high-contrast",
     "underline-links": "a11y-underline-links",
-    "reduce-motion": "a11y-reduce-motion"
+    "reduce-motion": "a11y-reduce-motion",
+    "readable-font": "a11y-readable-font",
+    "text-spacing": "a11y-text-spacing",
+    "focus-highlight": "a11y-focus-highlight"
   };
   const defaultA11ySettings = {
     "small-text": false,
     "large-text": false,
     "high-contrast": false,
     "underline-links": false,
-    "reduce-motion": false
+    "reduce-motion": false,
+    "readable-font": false,
+    "text-spacing": false,
+    "focus-highlight": false
   };
+  const accessibilityStatementHash = "#accessibility";
   let currentA11ySettings = {
     ...defaultA11ySettings,
     ...getSavedA11ySettings()
@@ -561,9 +568,14 @@
   }
 
   function closeA11yPanel() {
-    if (!accessibilityPanel) return;
+    if (!accessibilityPanel || accessibilityPanel.hidden) return;
+    const hadFocus = accessibilityPanel.contains(document.activeElement);
     accessibilityPanel.hidden = true;
     accessibilityToggle?.setAttribute("aria-expanded", "false");
+
+    if (hadFocus) {
+      accessibilityToggle?.focus();
+    }
   }
 
   applyA11ySettings();
@@ -580,6 +592,10 @@
   });
 
   document.querySelector("[data-a11y-close]")?.addEventListener("click", closeA11yPanel);
+
+  if (window.location.hash === accessibilityStatementHash) {
+    openDialog("accessibility-modal");
+  }
 
   document.querySelectorAll("[data-a11y-toggle]").forEach((button) => {
     button.addEventListener("click", () => {
@@ -606,7 +622,9 @@
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") {
-      closeA11yPanel();
+      if (!document.querySelector(".legal-dialog[open]")) {
+        closeA11yPanel();
+      }
 
       if (videoLightbox?.open) {
         closeVideoLightbox();
