@@ -70,12 +70,40 @@ body.cookie-visible {
   padding-bottom: 142px;
 }
 
-body.a11y-large-text {
-  font-size: 18px;
+/* Text size options scale the root so rem-based sizes follow the body. */
+html.a11y-large-text {
+  font-size: 120%;
 }
 
+html.a11y-small-text {
+  font-size: 93.75%;
+}
+
+body.a11y-large-text,
 body.a11y-small-text {
-  font-size: 15px;
+  font-size: 1rem;
+}
+
+html.a11y-readable-font body,
+html.a11y-readable-font .nav-links {
+  font-family: Arial, "Noto Sans Hebrew", sans-serif;
+}
+
+/* Text spacing values from WCAG 1.4.12. */
+html.a11y-text-spacing body :not(svg, svg *) {
+  line-height: 1.5 !important;
+  letter-spacing: 0.12em !important;
+  word-spacing: 0.16em !important;
+}
+
+html.a11y-text-spacing p {
+  margin-block-end: 2em !important;
+}
+
+html.a11y-focus-highlight :focus-visible {
+  outline: 4px solid #ffbf47 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 7px #111019 !important;
 }
 
 body.a11y-high-contrast {
@@ -166,7 +194,7 @@ textarea {
 }
 
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 3px solid rgba(192, 24, 102, 0.34);
+  outline: 3px solid var(--brand-strong);
   outline-offset: 3px;
 }
 
@@ -2010,6 +2038,8 @@ tr:last-child td {
   inset-inline-end: 22px;
   z-index: 145;
   width: min(320px, calc(100vw - 32px));
+  max-height: calc(100svh - 108px);
+  overflow-y: auto;
   padding: 16px;
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: var(--radius);
@@ -2134,6 +2164,16 @@ tr:last-child td {
 .policy-content p {
   margin: 0 0 12px;
   color: var(--ink-soft);
+}
+
+.policy-content ul {
+  margin: 0 0 12px;
+  padding-inline-start: 22px;
+  color: var(--ink-soft);
+}
+
+.policy-content li {
+  margin-block-end: 6px;
 }
 
 .policy-content a {
@@ -2697,6 +2737,7 @@ tr:last-child td {
     inset-block-end: 138px;
     inset-inline: 14px;
     width: auto;
+    max-height: calc(100svh - 152px);
   }
 
   .policy-content {
