@@ -15,6 +15,7 @@
   --gold: #a97820;
   --line: #e9dfe7;
   --line-strong: #d8c8d4;
+  --line-field: #94808f;
   --radius: 16px;
   --radius-sm: 12px;
   --shadow: 0 24px 70px rgba(37, 23, 34, 0.14);
@@ -1776,7 +1777,7 @@ tr:last-child td {
 .lead-form select,
 .lead-form textarea {
   width: 100%;
-  border: 1px solid var(--line-strong);
+  border: 1px solid var(--line-field);
   border-radius: var(--radius-sm);
   padding: 12px 13px;
   background: #fff;
